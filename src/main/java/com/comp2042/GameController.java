@@ -18,6 +18,7 @@ public class GameController implements InputEventListener {
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         
+        // Game loop initialization
         timeline = new Timeline(new KeyFrame(
             Duration.millis(400),
             ae -> update()
@@ -53,6 +54,7 @@ public class GameController implements InputEventListener {
                 board.getScore().add(1);
             }
         }
+
         return new DownData(clearRow, board.getViewData());
     }
 
@@ -84,6 +86,10 @@ public class GameController implements InputEventListener {
         return board.getViewData();
     }
 
+    @Override
+    public ViewData onHoldEvent(MoveEvent event) {
+        return board.holdBrick();
+    }
 
     @Override
     public void createNewGame() {

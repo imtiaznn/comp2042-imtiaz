@@ -14,6 +14,19 @@
     -fx-border-radius: 12px;
 }
 
+.holdBoard {
+    -fx-border-color: linear-gradient(#2A5058, #61a2b1);
+    -fx-border-width: 12px;
+    -fx-border-radius: 12px;
+}
+
+.sectionLabel {
+    -fx-font-family: "Let's go Digital";
+    -fx-padding: 10px;
+    -fx-font-size: 20px;
+    -fx-text-fill: yellow;
+}
+
 .nextBrickLabel {
     -fx-font-family: "Let's go Digital";
     -fx-padding: 20px 0 0 0;

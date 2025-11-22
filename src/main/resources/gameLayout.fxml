@@ -6,13 +6,31 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
+
 <Pane fx:controller="com.comp2042.GuiController"
       xmlns:fx="http://javafx.com/fxml">
-    <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
-    <BorderPane styleClass="gameBoard" fx:id="gameBoard">
-        <center>
-            <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="30" layoutX="40"/>
-        </center>
+    
+    <!-- Game Board -->
+    <Pane>
+
+        <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
+
+        <BorderPane styleClass="gameBoard" fx:id="gameBoard">
+            <center>
+                <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="30" layoutX="40"/>
+            </center>
+        </BorderPane>
+
+    </Pane>
+
+    <!-- Hold Block -->
+    <BorderPane styleClass="holdBoard" fx:id="holdBoard" layoutX="250" prefHeight="125" prefWidth="150">
+        <top>
+            <Label text="HOLD" styleClass="sectionLabel" layoutX="10" layoutY="10"/>
+        </top>
+        <right>
+            <GridPane fx:id="holdPanel" hgap="1" vgap="1" layoutX="50" layoutY="40"/>
+        </right>
     </BorderPane>
 
     <Group fx:id="groupNotification" layoutX="14" layoutY="203">
@@ -20,6 +38,7 @@
             <GameOverPanel fx:id="gameOverPanel"/>
         </VBox>
     </Group>
+
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>
