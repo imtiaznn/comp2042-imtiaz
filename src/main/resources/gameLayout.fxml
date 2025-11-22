@@ -13,26 +13,31 @@
     <!-- Game Board -->
     <Pane>
 
-        <GridPane fx:id="brickPanel" vgap="1" hgap="1"/>
+        <GridPane fx:id="brickPanel" vgap="0" hgap="0"/>
 
         <BorderPane styleClass="gameBoard" fx:id="gameBoard">
             <center>
-                <GridPane fx:id="gamePanel" hgap="1" vgap="1" layoutY="30" layoutX="40"/>
+                <GridPane fx:id="gamePanel" hgap="0" vgap="0" layoutY="30" layoutX="40"/>
             </center>
         </BorderPane>
 
     </Pane>
 
     <!-- Hold Block -->
-    <BorderPane styleClass="holdBoard" fx:id="holdBoard" layoutX="250" prefHeight="125" prefWidth="150">
-        <top>
+    <VBox layoutX="250">
+        <Pane styleClass="holdBoard" fx:id="holdBoard" prefHeight="125" prefWidth="150">
             <Label text="HOLD" styleClass="sectionLabel" layoutX="10" layoutY="10"/>
-        </top>
-        <right>
-            <GridPane fx:id="holdPanel" hgap="1" vgap="1" layoutX="50" layoutY="40"/>
-        </right>
-    </BorderPane>
+            <GridPane fx:id="holdPanel" hgap="0" vgap="0" layoutX="30" layoutY="40"/>
+        </Pane>
 
+        <!-- Next Block -->
+        <Pane styleClass="nextBoard" fx:id="nextBoard" layoutX="450" prefHeight="300" prefWidth="150">
+            <Label text="NEXT" styleClass="sectionLabel" layoutX="10" layoutY="10"/>
+            <GridPane fx:id="nextPanel" layoutX="30" layoutY="40"/>
+        </Pane>
+    </VBox>
+
+    <!-- Notification -->
     <Group fx:id="groupNotification" layoutX="14" layoutY="203">
         <VBox alignment="CENTER">
             <GameOverPanel fx:id="gameOverPanel"/>

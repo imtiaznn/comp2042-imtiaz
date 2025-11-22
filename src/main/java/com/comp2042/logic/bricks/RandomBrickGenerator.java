@@ -33,8 +33,29 @@ public class RandomBrickGenerator implements BrickGenerator {
         return nextBricks.poll();
     }
 
+    //TODO: Implement getNextBrick properly
     @Override
     public Brick getNextBrick() {
         return nextBricks.peek();
+    }
+
+    // Peek next 3 bricks
+    @Override
+    public Brick[] peekNextBricks(int index) {
+        if (index < 0) {
+            return null;
+        }
+
+        while (nextBricks.size() <= index) {
+            nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
+        }
+
+        Brick[] bricks = new Brick[index + 1];
+        int i = 0;
+        for (Brick b : nextBricks) {
+            if (i > index) break;
+            bricks[i++] = b;
+        }
+        return bricks;
     }
 }

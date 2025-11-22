@@ -5,19 +5,14 @@
 .nextBrick {
     -fx-border-width: 2px;
     -fx-border-color: whitesmoke;
-    -fx-border-radius: 17px;
+    /* -fx-border-radius: 17px; */
 }
 
-.gameBoard {
+.gameBoard,
+.holdBoard, 
+.nextBoard{
     -fx-border-color: linear-gradient(#2A5058, #61a2b1);
     -fx-border-width: 12px;
-    -fx-border-radius: 12px;
-}
-
-.holdBoard {
-    -fx-border-color: linear-gradient(#2A5058, #61a2b1);
-    -fx-border-width: 12px;
-    -fx-border-radius: 12px;
 }
 
 .sectionLabel {

@@ -87,7 +87,7 @@ public class SimpleBoard implements Board {
     public boolean createNewBrick() {
         Brick currentBrick = brickGenerator.getBrick();
         brickRotator.setBrick(currentBrick);
-        currentOffset = new Point(4, 10);
+        currentOffset = new Point(4, 0);
         hasHeldThisTurn = false;
         return MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
@@ -99,8 +99,24 @@ public class SimpleBoard implements Board {
 
     @Override
     public ViewData getViewData() {
-        int[][] next = brickGenerator.getNextBrick() != null ? brickGenerator.getNextBrick().getShapeMatrix().get(0) : new int[][]{{0}};
+        // int[][] next = brickGenerator.getNextBrick() != null ? brickGenerator.getNextBrick().getShapeMatrix().get(0) : new int[][]{{0}};
+
+        // Peek next 3 bricks
+        final int AMOUNT_NEXT_BRICKS = 3;
+        int[][][] next = new int[AMOUNT_NEXT_BRICKS][4][4];
+
+        for (int i = 0; i < AMOUNT_NEXT_BRICKS; i++) {
+            Brick b = brickGenerator.peekNextBricks(AMOUNT_NEXT_BRICKS)[i];
+            if (b != null) {
+                next[i] = b.getShapeMatrix().get(0);
+            } else {
+                next[i] = new int[][]{{0}};
+            }
+        }
+
+        // Held brick
         int[][] held = heldBrick != null ? heldBrick.getShapeMatrix().get(0) : new int[][]{{0}};
+
         return new ViewData(brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY(), next, held);
     }
 
@@ -153,8 +169,9 @@ public class SimpleBoard implements Board {
             brickRotator.setBrick(swap);
         }
 
-        currentOffset = new Point(4, 10);
+        currentOffset = new Point(4, 0);
         hasHeldThisTurn = true;
         return getViewData();
     }
+
 }

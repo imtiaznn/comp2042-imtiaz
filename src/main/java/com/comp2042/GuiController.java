@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
+    private static final int AMOUNT_NEXT_BRICKS = 3;
 
     @FXML
     private GridPane gamePanel;
@@ -42,12 +43,16 @@ public class GuiController implements Initializable {
     @FXML
     private GridPane holdPanel;
 
+    @FXML
+    private GridPane nextPanel;
+
     private Rectangle[][] displayMatrix;
 
     private InputEventListener eventListener;
 
     private Rectangle[][] rectangles;
     private Rectangle[][] holdRectangles;
+    private Rectangle[][][] nextRectangles;
 
     private final BooleanProperty isPause = new SimpleBooleanProperty();
 
@@ -101,7 +106,7 @@ public class GuiController implements Initializable {
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
-        // Create game board display by dividing into rectangles
+        // Create game board display
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
         for (int i = 2; i < boardMatrix.length; i++) {
             for (int j = 0; j < boardMatrix[i].length; j++) {
@@ -134,9 +139,23 @@ public class GuiController implements Initializable {
             }
         }
 
+        // Create next brick display
+        nextRectangles = new Rectangle[AMOUNT_NEXT_BRICKS][4][4];
+        for (int n = 0; n < AMOUNT_NEXT_BRICKS; n++) {
+           for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                    rectangle.setFill(Color.TRANSPARENT);
+                    nextRectangles[n][i][j] = rectangle;
+                    // Multiply y position by 5 to create spacing between next bricks
+                    nextPanel.add(rectangle, j, i + n * 5);
+                }
+            }
+        }
+
         // Set brick panel to follow the brick position
-        brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-        brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+        brickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getxPosition() * BRICK_SIZE));
+        brickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getyPosition() * BRICK_SIZE));
 
     }
 
@@ -174,17 +193,18 @@ public class GuiController implements Initializable {
         return returnPaint;
     }
 
-
     private void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
-            brickPanel.setLayoutX(gamePanel.getLayoutX() + brick.getxPosition() * brickPanel.getVgap() + brick.getxPosition() * BRICK_SIZE);
-            brickPanel.setLayoutY(-42 + gamePanel.getLayoutY() + brick.getyPosition() * brickPanel.getHgap() + brick.getyPosition() * BRICK_SIZE);
+            brickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getxPosition() * BRICK_SIZE));
+            brickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getyPosition() * BRICK_SIZE));
             for (int i = 0; i < brick.getBrickData().length; i++) {
                 for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
                 }
             }
+            
             refreshHold(brick);
+            refreshNext(brick.getNextBricksData());
         }
     }
 
@@ -201,6 +221,21 @@ public class GuiController implements Initializable {
         }
     }
 
+    public void refreshNext(int[][][] nextBricks) {
+        for (int n = 0; n < AMOUNT_NEXT_BRICKS; n++) {
+            int[][] next = (nextBricks != null && nextBricks.length > n) ? nextBricks[n] : null;
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    int color = 0;
+                    if (next != null && i < next.length && j < next[i].length) {
+                        color = next[i][j];
+                    }
+                    setRectangleData(color, nextRectangles[n][i][j]);
+                }
+            }
+        }
+    }
+
     public void refreshGameBackground(int[][] board) {
         for (int i = 2; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -211,8 +246,8 @@ public class GuiController implements Initializable {
 
     private void setRectangleData(int color, Rectangle rectangle) {
         rectangle.setFill(getFillColor(color));
-        rectangle.setArcHeight(9);
-        rectangle.setArcWidth(9);
+        rectangle.setStroke(null);
+        rectangle.setSmooth(false);
     }
 
     public void moveDown(MoveEvent event) {

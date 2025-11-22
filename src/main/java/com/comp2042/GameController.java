@@ -30,6 +30,7 @@ public class GameController implements InputEventListener {
     }
 
     public void update() {
+        // Trigger down event from the game loop
         viewGuiController.moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD));
     }
 
@@ -38,11 +39,14 @@ public class GameController implements InputEventListener {
         boolean canMove = board.moveBrickDown();
         ClearRow clearRow = null;
         if (!canMove) {
+            
             board.mergeBrickToBackground();
             clearRow = board.clearRows();
+
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
             }
+
             if (board.createNewBrick()) {
                 viewGuiController.gameOver();
             }
