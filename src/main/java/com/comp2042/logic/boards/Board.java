@@ -3,7 +3,6 @@ package com.comp2042.logic.boards;
 import com.comp2042.models.ClearRow;
 import com.comp2042.models.Score;
 import com.comp2042.models.ViewData;
-import java.awt.*;
 
 public interface Board {
 
@@ -19,7 +18,7 @@ public interface Board {
 
     boolean createNewBrick();
 
-    boolean updateGhostPosition();
+    boolean updateGhost();
 
     int[][] getBoardMatrix();
 

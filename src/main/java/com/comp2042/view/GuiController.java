@@ -182,10 +182,10 @@ public class GuiController implements Initializable {
         }
 
         brickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getxPosition() * BRICK_SIZE));
-        brickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getyPosition() * BRICK_SIZE));
+        brickPanel.setLayoutY(Math.round(-40 + gamePanel.getLayoutY() + brick.getyPosition() * BRICK_SIZE));
 
         ghostBrickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getGhostXPosition() * BRICK_SIZE));
-        ghostBrickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getGhostYPosition() * BRICK_SIZE));
+        ghostBrickPanel.setLayoutY(Math.round(-40 + gamePanel.getLayoutY() + brick.getGhostYPosition() * BRICK_SIZE));
 
     }
 
@@ -227,11 +227,11 @@ public class GuiController implements Initializable {
         if (isPause.getValue() == Boolean.FALSE) {
             // Set brick panel position
             brickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getxPosition() * BRICK_SIZE));
-            brickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getyPosition() * BRICK_SIZE));
+            brickPanel.setLayoutY(Math.round(-40 + gamePanel.getLayoutY() + brick.getyPosition() * BRICK_SIZE));
             
             // Set ghost panel position
             ghostBrickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getGhostXPosition() * BRICK_SIZE));
-            ghostBrickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getGhostYPosition() * BRICK_SIZE));
+            ghostBrickPanel.setLayoutY(Math.round(-40 + gamePanel.getLayoutY() + brick.getGhostYPosition() * BRICK_SIZE));
 
             // Update current falling brick
             for (int i = 0; i < brick.getBrickData().length; i++) {

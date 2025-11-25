@@ -44,7 +44,7 @@ public class SimpleBoard implements Board {
             return false;
         } else {
             brickOffset = p;
-            updateGhostPosition();
+            updateGhost();
             return true;
         }
     }
@@ -59,7 +59,7 @@ public class SimpleBoard implements Board {
             return false;
         } else {
             brickOffset = p;
-            updateGhostPosition();
+            updateGhost();
             return true;
         }
     }
@@ -74,7 +74,7 @@ public class SimpleBoard implements Board {
             return false;
         } else {
             brickOffset = p;
-            updateGhostPosition();
+            updateGhost();
             return true;
         }
     }
@@ -87,13 +87,15 @@ public class SimpleBoard implements Board {
         return true;
     }
 
-    public boolean updateGhostPosition() {
+    @Override
+    public boolean updateGhost() {
         Point p = calculateGhostOffset(brickOffset);
         ghostBrickOffset = p;
         return true;
     }
 
-    public Point calculateGhostOffset(Point num) {
+    // Ghost position helper function
+    private Point calculateGhostOffset(Point num) {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
         Point p = new Point(num);
 
@@ -117,7 +119,7 @@ public class SimpleBoard implements Board {
             return false;
         } else {
             brickRotator.setCurrentShape(nextShape.getPosition());
-            updateGhostPosition();
+            updateGhost();
             return true;
         }
     }

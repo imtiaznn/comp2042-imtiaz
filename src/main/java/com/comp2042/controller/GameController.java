@@ -50,13 +50,9 @@ public class GameController implements InputEventListener {
     }
 
     public void update() {
-        // Trigger down event from the game loop
-        // viewGuiController.moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD));
         
         // Move brick down
         boolean canMove = board.moveBrickDown();
-        // Update ghost position
-        boolean ghostUpdated = board.updateGhostPosition();
 
         if (!canMove) {
             // Clear and merge rows
