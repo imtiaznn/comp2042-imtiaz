@@ -84,34 +84,12 @@ public class GameController implements InputEventListener {
     }
 
     // Deprecated
-    @Override
-    public ViewData onDownEvent(MoveEvent event) {
-        // boolean canMove = board.moveBrickDown();
-        // if (!canMove) {
-            
-        //     board.mergeBrickToBackground();
-        //     ClearRow clearRow = board.clearRows();
-        //     lastClearRow = clearRow;
+    // @Override
+    // public ViewData onDownEvent(MoveEvent event) {
 
-        //     if (clearRow.getLinesRemoved() > 0) {
-        //         board.getScore().add(clearRow.getScoreBonus());
-        //     }
-
-        //     if (board.createNewBrick()) {
-        //         viewGuiController.gameOver();
-        //     }
-
-        //     viewGuiController.refreshGameBackground(board.getBoardMatrix());
-
-        // } else {
-        //     if (event.getEventSource() == EventSource.USER) {
-        //         board.getScore().add(1);
-        //     }
-        // }
-        board.moveBrickDown();
-
-        return board.getViewData();
-    }
+    //     board.moveBrickDown();
+    //     return board.getViewData();
+    // }
 
     @Override
     public void startGame() {
@@ -139,34 +117,36 @@ public class GameController implements InputEventListener {
                 break;
             case HOLD:
                 return board.holdBrick();
+            case DROP:
+                board.dropBrick();
             default:
                 break;
         }
         return board.getViewData();
     }
 
-    @Override
-    public ViewData onLeftEvent(MoveEvent event) {
-        board.moveBrickLeft();
-        return board.getViewData();
-    }
+    // @Override
+    // public ViewData onLeftEvent(MoveEvent event) {
+    //     board.moveBrickLeft();
+    //     return board.getViewData();
+    // }
 
-    @Override
-    public ViewData onRightEvent(MoveEvent event) {
-        board.moveBrickRight();
-        return board.getViewData();
-    }
+    // @Override
+    // public ViewData onRightEvent(MoveEvent event) {
+    //     board.moveBrickRight();
+    //     return board.getViewData();
+    // }
 
-    @Override
-    public ViewData onRotateEvent(MoveEvent event) {
-        board.rotateLeftBrick();
-        return board.getViewData();
-    }
+    // @Override
+    // public ViewData onRotateEvent(MoveEvent event) {
+    //     board.rotateLeftBrick();
+    //     return board.getViewData();
+    // }
 
-    @Override
-    public ViewData onHoldEvent(MoveEvent event) {
-        return board.holdBrick();
-    }
+    // @Override
+    // public ViewData onHoldEvent(MoveEvent event) {
+    //     return board.holdBrick();
+    // }
 
     @Override
     public void createNewGame() {

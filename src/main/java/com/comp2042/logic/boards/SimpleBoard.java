@@ -46,8 +46,7 @@ public class SimpleBoard implements Board {
             return true;
         }
     }
-
-
+    
     @Override
     public boolean moveBrickLeft() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -61,7 +60,7 @@ public class SimpleBoard implements Board {
             return true;
         }
     }
-
+    
     @Override
     public boolean moveBrickRight() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -75,7 +74,25 @@ public class SimpleBoard implements Board {
             return true;
         }
     }
+    
+    @Override
+    public boolean dropBrick() {
+        int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
+        Point p = new Point(currentOffset);
 
+        while(true) {
+            // p.setLocation(currentOffset.getX(), y);
+            p.translate(0, 1);
+            boolean conflict = MatrixOperations.intersect(currentMatrix, brickRotator.getCurrentShape(), (int) p.getX(), (int) p.getY());
+            if (conflict) {
+                // currentOffset.setLocation(currentOffset.getX(), y - 1);
+                p.translate(0, -1);
+                currentOffset = p;
+                return true;
+            }
+        }
+    }
+    
     @Override
     public boolean rotateLeftBrick() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -143,7 +160,6 @@ public class SimpleBoard implements Board {
     public Score getScore() {
         return score;
     }
-
 
     @Override
     public void newGame() {

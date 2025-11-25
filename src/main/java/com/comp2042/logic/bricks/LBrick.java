@@ -3,7 +3,6 @@ package com.comp2042.logic.bricks;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.comp2042.logic.bricks.Brick;
 import com.comp2042.utils.MatrixOperations;
 
 final class LBrick implements Brick {

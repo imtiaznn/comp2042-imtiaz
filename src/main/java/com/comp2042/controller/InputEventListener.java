@@ -6,16 +6,6 @@ import com.comp2042.models.ViewData;
 
 public interface InputEventListener {
 
-    ViewData onDownEvent(MoveEvent event);
-
-    ViewData onLeftEvent(MoveEvent event);
-
-    ViewData onRightEvent(MoveEvent event);
-
-    ViewData onRotateEvent(MoveEvent event);
-
-    ViewData onHoldEvent(MoveEvent event);
-
     ViewData onMoveEvent(MoveEvent event);
 
     ClearRow getClearRows()
