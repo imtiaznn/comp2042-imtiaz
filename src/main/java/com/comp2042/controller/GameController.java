@@ -1,4 +1,11 @@
-package com.comp2042;
+package com.comp2042.controller;
+
+import com.comp2042.events.MoveEvent;
+import com.comp2042.logic.boards.Board;
+import com.comp2042.logic.boards.SimpleBoard;
+import com.comp2042.models.ClearRow;
+import com.comp2042.models.ViewData;
+import com.comp2042.view.GuiController;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -42,33 +49,66 @@ public class GameController implements InputEventListener {
 
     public void update() {
         // Trigger down event from the game loop
-        viewGuiController.moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD));
-    }
-
-    @Override
-    public ViewData onDownEvent(MoveEvent event) {
+        // viewGuiController.moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD));
+        
+        // Move brick down
         boolean canMove = board.moveBrickDown();
+        
         if (!canMove) {
-            
+            // Clear and merge rows
             board.mergeBrickToBackground();
+
+            // Clear rows
             ClearRow clearRow = board.clearRows();
             lastClearRow = clearRow;
 
+            // Update score
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
+                viewGuiController.showScoreNotification();
             }
-
+            
+            
             if (board.createNewBrick()) {
                 viewGuiController.gameOver();
             }
-
+            
+            // Refresh view
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
-
+            
         } else {
-            if (event.getEventSource() == EventSource.USER) {
-                board.getScore().add(1);
-            }
+            board.getScore().add(1);
         }
+
+        viewGuiController.refreshBrick(board.getViewData());
+    }
+
+    // Deprecated
+    @Override
+    public ViewData onDownEvent(MoveEvent event) {
+        // boolean canMove = board.moveBrickDown();
+        // if (!canMove) {
+            
+        //     board.mergeBrickToBackground();
+        //     ClearRow clearRow = board.clearRows();
+        //     lastClearRow = clearRow;
+
+        //     if (clearRow.getLinesRemoved() > 0) {
+        //         board.getScore().add(clearRow.getScoreBonus());
+        //     }
+
+        //     if (board.createNewBrick()) {
+        //         viewGuiController.gameOver();
+        //     }
+
+        //     viewGuiController.refreshGameBackground(board.getBoardMatrix());
+
+        // } else {
+        //     if (event.getEventSource() == EventSource.USER) {
+        //         board.getScore().add(1);
+        //     }
+        // }
+        board.moveBrickDown();
 
         return board.getViewData();
     }
@@ -90,6 +130,9 @@ public class GameController implements InputEventListener {
                 break;
             case RIGHT:
                 board.moveBrickRight();
+                break;
+            case DOWN:
+                board.moveBrickDown();
                 break;
             case ROTATE:
                 board.rotateLeftBrick();

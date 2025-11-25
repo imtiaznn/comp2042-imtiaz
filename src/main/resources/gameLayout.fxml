@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 
-<AnchorPane fx:controller="com.comp2042.GuiController"
+<AnchorPane fx:controller="com.comp2042.view.GuiController"
       xmlns:fx="http://javafx.com/fxml">
     
     <!-- Game Board -->

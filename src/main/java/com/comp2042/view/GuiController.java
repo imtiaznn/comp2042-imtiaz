@@ -1,4 +1,4 @@
-package com.comp2042;
+package com.comp2042.view;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -24,6 +24,13 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javax.swing.text.View;
+
+import com.comp2042.controller.InputEventListener;
+import com.comp2042.events.EventSource;
+import com.comp2042.events.EventType;
+import com.comp2042.events.MoveEvent;
+import com.comp2042.models.ClearRow;
+import com.comp2042.models.ViewData;
 
 public class GuiController implements Initializable {
 
@@ -83,7 +90,7 @@ public class GuiController implements Initializable {
                         keyEvent.consume();
                     }
                     if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
-                        moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
+                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.DOWN, EventSource.USER)));
                         keyEvent.consume();
                     }
                     if (keyEvent.getCode() == KeyCode.C) {
@@ -201,7 +208,7 @@ public class GuiController implements Initializable {
         return returnPaint;
     }
 
-    private void refreshBrick(ViewData brick) {
+    public void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
             brickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getxPosition() * BRICK_SIZE));
             brickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getyPosition() * BRICK_SIZE));
@@ -258,9 +265,8 @@ public class GuiController implements Initializable {
         rectangle.setSmooth(false);
     }
 
-    public void moveDown(MoveEvent event) {
+    public void showScoreNotification() {
         if (isPause.getValue() == Boolean.FALSE) {
-            ViewData downData = eventListener.onDownEvent(event);
             ClearRow clearRow = eventListener.getClearRows();
 
             if (clearRow != null && clearRow.getLinesRemoved() > 0) {
@@ -273,7 +279,6 @@ public class GuiController implements Initializable {
                 groupNotification.getChildren().add(scoreNotification);
                 scoreNotification.show();
             }
-            refreshBrick(downData);
         }
         gamePanel.requestFocus();
     }

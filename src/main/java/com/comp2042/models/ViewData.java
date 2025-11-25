@@ -1,4 +1,6 @@
-package com.comp2042;
+package com.comp2042.models;
+
+import com.comp2042.utils.MatrixOperations;
 
 public final class ViewData {
 
@@ -34,5 +36,6 @@ public final class ViewData {
 
     public int[][] getHeldBrickData() {
         return MatrixOperations.copy(heldBrickData);
+
     }
 }

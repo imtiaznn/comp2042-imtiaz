@@ -1,4 +1,8 @@
-package com.comp2042;
+package com.comp2042.logic.boards;
+
+import com.comp2042.models.ClearRow;
+import com.comp2042.models.Score;
+import com.comp2042.models.ViewData;
 
 public interface Board {
 

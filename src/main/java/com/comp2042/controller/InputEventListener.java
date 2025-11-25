@@ -1,4 +1,8 @@
-package com.comp2042;
+package com.comp2042.controller;
+
+import com.comp2042.events.MoveEvent;
+import com.comp2042.models.ClearRow;
+import com.comp2042.models.ViewData;
 
 public interface InputEventListener {
 

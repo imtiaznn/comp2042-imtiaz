@@ -33,12 +33,6 @@ public class RandomBrickGenerator implements BrickGenerator {
         return nextBricks.poll();
     }
 
-    //TODO: Implement getNextBrick properly
-    @Override
-    public Brick getNextBrick() {
-        return nextBricks.peek();
-    }
-
     // Peek next 3 bricks
     @Override
     public Brick[] peekNextBricks(int index) {

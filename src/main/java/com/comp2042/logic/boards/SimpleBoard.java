@@ -1,8 +1,14 @@
-package com.comp2042;
+package com.comp2042.logic.boards;
 
 import com.comp2042.logic.bricks.Brick;
 import com.comp2042.logic.bricks.BrickGenerator;
+import com.comp2042.logic.bricks.BrickRotator;
+import com.comp2042.logic.bricks.NextShapeInfo;
 import com.comp2042.logic.bricks.RandomBrickGenerator;
+import com.comp2042.models.ClearRow;
+import com.comp2042.models.Score;
+import com.comp2042.models.ViewData;
+import com.comp2042.utils.MatrixOperations;
 
 import java.awt.*;
 
