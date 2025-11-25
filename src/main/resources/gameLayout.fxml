@@ -13,6 +13,7 @@
     <Pane>
 
         <GridPane fx:id="brickPanel" vgap="0" hgap="0"/>
+        <GridPane fx:id="ghostBrickPanel" vgap="0" hgap="0"/>
 
         <BorderPane styleClass="gameBoard" fx:id="gameBoard">
             <center>

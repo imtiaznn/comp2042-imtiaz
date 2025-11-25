@@ -1,5 +1,7 @@
 package com.comp2042.controller;
 
+import java.awt.Point;
+
 import com.comp2042.events.MoveEvent;
 import com.comp2042.logic.boards.Board;
 import com.comp2042.logic.boards.SimpleBoard;
@@ -53,7 +55,9 @@ public class GameController implements InputEventListener {
         
         // Move brick down
         boolean canMove = board.moveBrickDown();
-        
+        // Update ghost position
+        boolean ghostUpdated = board.updateGhostPosition();
+
         if (!canMove) {
             // Clear and merge rows
             board.mergeBrickToBackground();
@@ -67,8 +71,8 @@ public class GameController implements InputEventListener {
                 board.getScore().add(clearRow.getScoreBonus());
                 viewGuiController.showScoreNotification();
             }
-            
-            
+
+            // End game if cannot move and final block is intersecting
             if (board.createNewBrick()) {
                 viewGuiController.gameOver();
             }
@@ -80,16 +84,9 @@ public class GameController implements InputEventListener {
             board.getScore().add(1);
         }
 
+        // Refresh
         viewGuiController.refreshBrick(board.getViewData());
     }
-
-    // Deprecated
-    // @Override
-    // public ViewData onDownEvent(MoveEvent event) {
-
-    //     board.moveBrickDown();
-    //     return board.getViewData();
-    // }
 
     @Override
     public void startGame() {
@@ -124,29 +121,6 @@ public class GameController implements InputEventListener {
         }
         return board.getViewData();
     }
-
-    // @Override
-    // public ViewData onLeftEvent(MoveEvent event) {
-    //     board.moveBrickLeft();
-    //     return board.getViewData();
-    // }
-
-    // @Override
-    // public ViewData onRightEvent(MoveEvent event) {
-    //     board.moveBrickRight();
-    //     return board.getViewData();
-    // }
-
-    // @Override
-    // public ViewData onRotateEvent(MoveEvent event) {
-    //     board.rotateLeftBrick();
-    //     return board.getViewData();
-    // }
-
-    // @Override
-    // public ViewData onHoldEvent(MoveEvent event) {
-    //     return board.holdBrick();
-    // }
 
     @Override
     public void createNewGame() {

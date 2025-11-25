@@ -47,6 +47,9 @@ public class GuiController implements Initializable {
     private GridPane brickPanel;
 
     @FXML
+    private GridPane ghostBrickPanel;
+
+    @FXML
     private MessageOverlay gameOverPanel;
 
     @FXML
@@ -61,6 +64,7 @@ public class GuiController implements Initializable {
 
     private Rectangle[][] rectangles;
     private Rectangle[][] holdRectangles;
+    private Rectangle[][] ghostRectangles;
     private Rectangle[][][] nextRectangles;
 
     private final BooleanProperty isPause = new SimpleBooleanProperty();
@@ -116,12 +120,6 @@ public class GuiController implements Initializable {
             groupNotification.getChildren().add(gameOverPanel);
             gameOverPanel.hide();
         }
-
-        final Reflection reflection = new Reflection();
-        reflection.setFraction(0.8);
-        reflection.setTopOpacity(0.9);
-        reflection.setTopOffset(-12);
-
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -144,6 +142,17 @@ public class GuiController implements Initializable {
                 rectangle.setFill(getFillColor(brick.getBrickData()[i][j]));
                 rectangles[i][j] = rectangle;
                 brickPanel.add(rectangle, j, i);
+            }
+        }
+
+        // Create ghost brick display
+        ghostRectangles = new Rectangle[brick.getBrickData().length][brick.getBrickData()[0].length];
+        for (int i = 0; i < brick.getBrickData().length; i++) {
+            for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+                Rectangle rectangle = new Rectangle(BRICK_SIZE, BRICK_SIZE);
+                rectangle.setFill(getFillColor(brick.getBrickData()[i][j]).deriveColor(0, 1, 1, 0.5));
+                ghostRectangles[i][j] = rectangle;
+                ghostBrickPanel.add(rectangle, j, i);
             }
         }
 
@@ -172,14 +181,16 @@ public class GuiController implements Initializable {
             }
         }
 
-        // Set brick panel to follow the brick position
         brickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getxPosition() * BRICK_SIZE));
         brickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getyPosition() * BRICK_SIZE));
 
+        ghostBrickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getGhostXPosition() * BRICK_SIZE));
+        ghostBrickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getGhostYPosition() * BRICK_SIZE));
+
     }
 
-    private Paint getFillColor(int i) {
-        Paint returnPaint;
+    private Color getFillColor(int i) {
+        Color returnPaint;
         switch (i) {
             case 0:
                 returnPaint = Color.TRANSPARENT;
@@ -214,14 +225,29 @@ public class GuiController implements Initializable {
 
     public void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
+            // Set brick panel position
             brickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getxPosition() * BRICK_SIZE));
             brickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getyPosition() * BRICK_SIZE));
+            
+            // Set ghost panel position
+            ghostBrickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getGhostXPosition() * BRICK_SIZE));
+            ghostBrickPanel.setLayoutY(Math.round(-42 + gamePanel.getLayoutY() + brick.getGhostYPosition() * BRICK_SIZE));
+
+            // Update current falling brick
             for (int i = 0; i < brick.getBrickData().length; i++) {
                 for (int j = 0; j < brick.getBrickData()[i].length; j++) {
                     setRectangleData(brick.getBrickData()[i][j], rectangles[i][j]);
                 }
             }
-            
+
+            // Update ghost brick
+            for (int i = 0; i < brick.getBrickData().length; i++) {
+                for (int j = 0; j < brick.getBrickData()[i].length; j++) {
+                    setRectangleData(brick.getBrickData()[i][j], ghostRectangles[i][j]);
+                    ghostRectangles[i][j].setFill(getFillColor(brick.getBrickData()[i][j]).deriveColor(0, 1, 1, 0.5));
+                }
+            }   
+
             refreshHold(brick);
             refreshNext(brick.getNextBricksData());
         }
