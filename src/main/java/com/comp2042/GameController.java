@@ -7,6 +7,7 @@ import javafx.util.Duration;
 public class GameController implements InputEventListener {
 
     private Timeline timeline;
+    private ClearRow lastClearRow;
 
     private Board board = new SimpleBoard(25, 10);
 
@@ -29,19 +30,29 @@ public class GameController implements InputEventListener {
         viewGuiController.bindScore(board.getScore().scoreProperty());
     }
 
+    public ViewData getViewData() {
+        return board.getViewData();
+    }
+
+    public ClearRow getClearRows() {
+        ClearRow tmp = lastClearRow;
+        lastClearRow = null;
+        return tmp;
+    }
+
     public void update() {
         // Trigger down event from the game loop
         viewGuiController.moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD));
     }
 
     @Override
-    public DownData onDownEvent(MoveEvent event) {
+    public ViewData onDownEvent(MoveEvent event) {
         boolean canMove = board.moveBrickDown();
-        ClearRow clearRow = null;
         if (!canMove) {
             
             board.mergeBrickToBackground();
-            clearRow = board.clearRows();
+            ClearRow clearRow = board.clearRows();
+            lastClearRow = clearRow;
 
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
@@ -59,7 +70,7 @@ public class GameController implements InputEventListener {
             }
         }
 
-        return new DownData(clearRow, board.getViewData());
+        return board.getViewData();
     }
 
     @Override
@@ -70,6 +81,25 @@ public class GameController implements InputEventListener {
     @Override
     public void stopGame() {
         if (timeline != null) timeline.stop();
+    }
+
+    public ViewData onMoveEvent(MoveEvent event) {
+        switch (event.getEventType()) {
+            case LEFT:
+                board.moveBrickLeft();
+                break;
+            case RIGHT:
+                board.moveBrickRight();
+                break;
+            case ROTATE:
+                board.rotateLeftBrick();
+                break;
+            case HOLD:
+                return board.holdBrick();
+            default:
+                break;
+        }
+        return board.getViewData();
     }
 
     @Override

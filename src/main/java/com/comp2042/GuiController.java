@@ -9,7 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
+import javafx.scene.layout.StackPane;
 import javafx.scene.effect.Reflection;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -23,6 +23,8 @@ import javafx.util.Duration;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javax.swing.text.View;
+
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
@@ -32,13 +34,13 @@ public class GuiController implements Initializable {
     private GridPane gamePanel;
 
     @FXML
-    private Group groupNotification;
+    private StackPane groupNotification;
 
     @FXML
     private GridPane brickPanel;
 
     @FXML
-    private GameOverPanel gameOverPanel;
+    private MessageOverlay gameOverPanel;
 
     @FXML
     private GridPane holdPanel;
@@ -69,15 +71,15 @@ public class GuiController implements Initializable {
                 // Arrow key movement
                 if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
-                        refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
                         keyEvent.consume();
                     }
                     if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
-                        refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
                         keyEvent.consume();
                     }
                     if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
-                        refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
                         keyEvent.consume();
                     }
                     if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
@@ -85,7 +87,7 @@ public class GuiController implements Initializable {
                         keyEvent.consume();
                     }
                     if (keyEvent.getCode() == KeyCode.C) {
-                        refreshBrick(eventListener.onHoldEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
+                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
                         keyEvent.consume();
                     }
                 }
@@ -96,7 +98,13 @@ public class GuiController implements Initializable {
                 }
             }
         });
-        gameOverPanel.setVisible(false);
+
+        // Initialize game over panel
+        gameOverPanel = new MessageOverlay("GAME OVER", "gameOverStyle", null);
+        if (groupNotification != null) {
+            groupNotification.getChildren().add(gameOverPanel);
+            gameOverPanel.hide();
+        }
 
         final Reflection reflection = new Reflection();
         reflection.setFraction(0.8);
@@ -252,13 +260,20 @@ public class GuiController implements Initializable {
 
     public void moveDown(MoveEvent event) {
         if (isPause.getValue() == Boolean.FALSE) {
-            DownData downData = eventListener.onDownEvent(event);
-            if (downData.getClearRow() != null && downData.getClearRow().getLinesRemoved() > 0) {
-                NotificationPanel notificationPanel = new NotificationPanel("+" + downData.getClearRow().getScoreBonus());
-                groupNotification.getChildren().add(notificationPanel);
-                notificationPanel.showScore(groupNotification.getChildren());
+            ViewData downData = eventListener.onDownEvent(event);
+            ClearRow clearRow = eventListener.getClearRows();
+
+            if (clearRow != null && clearRow.getLinesRemoved() > 0) {
+                // NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
+                // groupNotification.getChildren().add(notificationPanel);
+                // notificationPanel.showScore(groupNotification.getChildren());
+
+                // Score notification
+                MessageOverlay scoreNotification = new MessageOverlay("+" + clearRow.getScoreBonus(), "scoreNotificationStyle", Duration.seconds(1.0));
+                groupNotification.getChildren().add(scoreNotification);
+                scoreNotification.show();
             }
-            refreshBrick(downData.getViewData());
+            refreshBrick(downData);
         }
         gamePanel.requestFocus();
     }
@@ -272,13 +287,13 @@ public class GuiController implements Initializable {
 
     public void gameOver() {
         eventListener.stopGame();
-        gameOverPanel.setVisible(true);
+        gameOverPanel.show();
         isGameOver.setValue(Boolean.TRUE);
     }
 
     public void newGame(ActionEvent actionEvent) {
         eventListener.stopGame();
-        gameOverPanel.setVisible(false);
+        gameOverPanel.hide();
         eventListener.createNewGame();
         gamePanel.requestFocus();
         eventListener.startGame();

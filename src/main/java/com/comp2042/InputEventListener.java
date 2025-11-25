@@ -2,7 +2,7 @@ package com.comp2042;
 
 public interface InputEventListener {
 
-    DownData onDownEvent(MoveEvent event);
+    ViewData onDownEvent(MoveEvent event);
 
     ViewData onLeftEvent(MoveEvent event);
 
@@ -11,6 +11,12 @@ public interface InputEventListener {
     ViewData onRotateEvent(MoveEvent event);
 
     ViewData onHoldEvent(MoveEvent event);
+
+    ViewData onMoveEvent(MoveEvent event);
+
+    ClearRow getClearRows()
+    ;
+    ViewData getViewData();
 
     void startGame();
     

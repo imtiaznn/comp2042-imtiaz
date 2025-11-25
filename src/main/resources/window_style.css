@@ -70,6 +70,14 @@
     -fx-font-family: "Let's go Digital";
     -fx-font-size: 48;
     -fx-background-color: red;
+    -fx-pref-width: 400px;
+}
+
+.scoreNotificationStyle {
+    -fx-font-family: "Let's go Digital";
+    -fx-font-size: 48;
+    -fx-pref-width: 400px;
+    -fx-text-fill: white;
 }
 
 .scoreClass{
