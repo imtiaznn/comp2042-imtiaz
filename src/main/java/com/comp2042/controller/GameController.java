@@ -1,7 +1,5 @@
 package com.comp2042.controller;
 
-import java.awt.Point;
-import java.lang.annotation.ElementType;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,16 +15,13 @@ import com.comp2042.models.ViewData;
 import com.comp2042.view.GuiController;
 
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
-import javafx.util.Duration;
 
 import javafx.scene.input.KeyCode;
 
 public class GameController implements InputEventListener {
 
-    private Timeline timeline;
     private AnimationTimer animationTimer;
     private ClearRow lastClearRow;
 
@@ -130,12 +125,12 @@ public class GameController implements InputEventListener {
 
     @Override
     public void startGame() {
-        if (timeline != null) timeline.play();
+        if (animationTimer != null) animationTimer.start();
     }
 
     @Override
     public void stopGame() {
-        if (timeline != null) timeline.stop();
+        if (animationTimer != null) animationTimer.stop();
     }
 
     public ViewData onMoveEvent(MoveEvent event) {

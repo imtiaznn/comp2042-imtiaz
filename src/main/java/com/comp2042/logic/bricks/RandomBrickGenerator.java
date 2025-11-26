@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomBrickGenerator implements BrickGenerator {
 
@@ -21,29 +20,32 @@ public class RandomBrickGenerator implements BrickGenerator {
         brickList.add(new SBrick());
         brickList.add(new TBrick());
         brickList.add(new ZBrick());
-        nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
-        nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
+
+        // Initial shuffle
+        shuffleBricks();
     }
 
     @Override
     public Brick getBrick() {
-        if (nextBricks.size() <= 1) {
-            nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
+        if (nextBricks.size() <= 3) {
+            shuffleBricks();
         }
         return nextBricks.poll();
+    }
+
+    public void shuffleBricks() {
+        List<Brick> shuffled = new ArrayList<>(brickList);
+        java.util.Collections.shuffle(shuffled);
+        nextBricks.clear();
+        nextBricks.addAll(shuffled);
     }
 
     // Peek next 3 bricks
     @Override
     public Brick[] peekNextBricks(int index) {
-        if (index < 0) {
-            return null;
-        }
-
         while (nextBricks.size() <= index) {
-            nextBricks.add(brickList.get(ThreadLocalRandom.current().nextInt(brickList.size())));
+            shuffleBricks();
         }
-
         Brick[] bricks = new Brick[index + 1];
         int i = 0;
         for (Brick b : nextBricks) {
