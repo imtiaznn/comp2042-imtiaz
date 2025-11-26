@@ -76,43 +76,43 @@ public class GuiController implements Initializable {
         Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
-        gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                // Arrow key movement
-                if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
-                    if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
-                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
-                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
-                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
-                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.DOWN, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.C) {
-                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                    if (keyEvent.getCode() == KeyCode.SPACE) {
-                        refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.DROP, EventSource.USER)));
-                        keyEvent.consume();
-                    }
-                }
+        // gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        //     @Override
+        //     public void handle(KeyEvent keyEvent) {
+        //         // Arrow key movement
+        //         if (isPause.getValue() == Boolean.FALSE && isGameOver.getValue() == Boolean.FALSE) {
+        //             if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
+        //                 refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
+        //                 keyEvent.consume();
+        //             }
+        //             if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
+        //                 refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
+        //                 keyEvent.consume();
+        //             }
+        //             if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
+        //                 refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
+        //                 keyEvent.consume();
+        //             }
+        //             if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
+        //                 refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.DOWN, EventSource.USER)));
+        //                 keyEvent.consume();
+        //             }
+        //             if (keyEvent.getCode() == KeyCode.C) {
+        //                 refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.HOLD, EventSource.USER)));
+        //                 keyEvent.consume();
+        //             }
+        //             if (keyEvent.getCode() == KeyCode.SPACE) {
+        //                 refreshBrick(eventListener.onMoveEvent(new MoveEvent(EventType.DROP, EventSource.USER)));
+        //                 keyEvent.consume();
+        //             }
+        //         }
 
-                // Start new game
-                if (keyEvent.getCode() == KeyCode.N) {
-                    newGame(null);
-                }
-            }
-        });
+        //         // Start new game
+        //         if (keyEvent.getCode() == KeyCode.N) {
+        //             newGame(null);
+        //         }
+        //     }
+        // });
 
         // Initialize game over panel
         gameOverPanel = new MessageOverlay("GAME OVER", "gameOverStyle", null);
