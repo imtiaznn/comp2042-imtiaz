@@ -7,7 +7,6 @@
 <?import java.net.URL?>
 
 <AnchorPane fx:controller="com.comp2042.view.GuiController"
-      fx:id = "gamePane"
       xmlns:fx="http://javafx.com/fxml">
     
     <!-- Game Board -->
@@ -22,11 +21,6 @@
             </center>
         </BorderPane>
 
-        <!-- Pause overlay (initially hidden) -->
-        <VBox fx:id="pauseOverlay" visible="false" style="-fx-background-color: rgba(0, 0, 0, 0.5);" alignment="CENTER" spacing="20">
-            <Button text="Resume" onAction="#resumeGame"/>
-            <Button text="Main Menu"/>
-        </VBox>
     </Pane>
 
     <!-- Hold Block -->
@@ -51,5 +45,4 @@
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>
-    
 </AnchorPane>

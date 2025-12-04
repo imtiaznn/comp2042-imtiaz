@@ -35,7 +35,6 @@ public class Main extends Application {
         new GameController(c, scene);
     }
 
-
     public static void main(String[] args) {
         launch(args);
     }

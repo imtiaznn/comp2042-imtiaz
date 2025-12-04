@@ -114,14 +114,31 @@ public class SimpleBoard implements Board {
     public boolean rotateLeftBrick() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
         NextShapeInfo nextShape = brickRotator.getNextShape();
-        boolean conflict = MatrixOperations.intersect(currentMatrix, nextShape.getShape(), (int) brickOffset.getX(), (int) brickOffset.getY());
-        if (conflict) {
-            return false;
-        } else {
-            brickRotator.setCurrentShape(nextShape.getPosition());
-            updateGhost();
-            return true;
+        int[][] rotatedShape = nextShape.getShape();
+
+        int[][] kicks = {
+            {0, 0},
+            {-1, 0},
+            {1, 0},
+            {-2, 0},
+            {2, 0},
+            {0, -1}
+        };
+
+        for (int[] k : kicks) {
+            int tryX = (int) brickOffset.getX() + k[0];
+            int tryY = (int) brickOffset.getY() + k[1];
+            boolean conflict = MatrixOperations.intersect(currentMatrix, rotatedShape, tryX, tryY);
+            if (!conflict) {
+                // apply rotation and the successful kick offset
+                brickRotator.setCurrentShape(nextShape.getPosition());
+                brickOffset = new Point(tryX, tryY);
+                updateGhost();
+                return true;
+            }
         }
+
+        return false;
     }
 
     @Override

@@ -15,7 +15,6 @@ import com.comp2042.models.ViewData;
 import com.comp2042.view.GuiController;
 
 import javafx.animation.AnimationTimer;
-import javafx.animation.Timeline;
 import javafx.scene.Scene;
 
 import javafx.scene.input.KeyCode;
@@ -37,7 +36,6 @@ public class GameController implements InputEventListener {
     // Game logic
     private static final long GAME_TICK = 400 * 1000000; // Game tick in miliseconds
     private long fallCooldown = 0;
-
 
     private Board board = new SimpleBoard(25, 10);
 
@@ -151,7 +149,7 @@ public class GameController implements InputEventListener {
                 return board.holdBrick();
             case DROP:
                 board.dropBrick();
-                board.mergeBrickToBackground();
+                // board.mergeBrickToBackground();
                 break;
             default:
                 break;
@@ -179,7 +177,9 @@ public class GameController implements InputEventListener {
                     // Reset last action time for soft drop to apply immediately
                     // lastActionAt.put(code, now);
                 }
-                else if (code == KeyCode.SPACE) onMoveEvent(new MoveEvent(EventType.DROP, EventSource.USER));
+                else if (code == KeyCode.SPACE) {
+                    onMoveEvent(new MoveEvent(EventType.DROP, EventSource.USER));
+                };
 
                 e.consume();                
             }
@@ -195,7 +195,11 @@ public class GameController implements InputEventListener {
     }
 
     private void processKeyInput() {
-    long now = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
+
+        if (viewGuiController.isPause() == Boolean.TRUE || viewGuiController.isGameOver() == Boolean.TRUE) {
+            return;
+        }
 
         // Horizontal movement with DAS + ARR
         if (activeKeys.contains(KeyCode.LEFT)) {
