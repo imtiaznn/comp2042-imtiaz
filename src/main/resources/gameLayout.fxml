@@ -6,50 +6,68 @@
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 
-<AnchorPane fx:controller="com.comp2042.view.GuiController"
-      fx:id = "gamePane"
-      xmlns:fx="http://javafx.com/fxml">
-    
+<StackPane fx:controller="com.comp2042.view.GuiController"
+      xmlns:fx="http://javafx.com/fxml"
+      xmlns="http://javafx.com/javafx">
+
     <!-- Game Board -->
-    <Pane>
+    <HBox spacing="10" alignment="CENTER">
 
-        <GridPane fx:id="brickPanel" vgap="0" hgap="0"/>
-        <GridPane fx:id="ghostBrickPanel" vgap="0" hgap="0"/>
+        <!-- Score Info -->
+        <VBox spacing="0" HBox.hgrow="NEVER" prefWidth="150">
 
-        <BorderPane styleClass="gameBoard" fx:id="gameBoard">
-            <center>
-                <GridPane fx:id="gamePanel" hgap="0" vgap="0" layoutY="30" layoutX="40"/>
-            </center>
-        </BorderPane>
+            <Label text="SCORE" styleClass="sectionLabel" layoutX="20"/>
+            <Label fx:id="scoreText" text="0" styleClass="infoText"/>
 
-        <!-- Pause overlay (initially hidden) -->
-        <VBox fx:id="pauseOverlay" visible="false" style="-fx-background-color: rgba(0, 0, 0, 0.5);" alignment="CENTER" spacing="20">
-            <Button text="Resume" onAction="#resumeGame"/>
-            <Button text="Main Menu"/>
+            <Label text="LEVEL" styleClass="sectionLabel" layoutX="20"/>
+            <Label fx:id="levelText" text="1" styleClass="infoText"/>
+
         </VBox>
-    </Pane>
 
-    <!-- Hold Block -->
-    <VBox layoutX="250">
-        <Pane styleClass="holdBoard" fx:id="holdBoard" prefHeight="125" prefWidth="150">
-            <Label text="HOLD" styleClass="sectionLabel" layoutX="10" layoutY="10"/>
-            <GridPane fx:id="holdPanel" hgap="0" vgap="0" layoutX="30" layoutY="40"/>
+        <!-- Game Board Pane -->
+        <Pane HBox.hgrow="ALWAYS" prefWidth="300" prefHeight="600">
+            <GridPane fx:id="brickPanel" vgap="0" hgap="0"/>
+            <GridPane fx:id="ghostBrickPanel" vgap="0" hgap="0"/>
+
+            <BorderPane styleClass="gameBoard" fx:id="gameBoard">
+                <center>
+                    <GridPane fx:id="gamePanel" hgap="0" vgap="0"/>
+                </center>
+            </BorderPane>
         </Pane>
 
-        <!-- Next Block -->
-        <Pane styleClass="nextBoard" fx:id="nextBoard" layoutX="450" prefHeight="300" prefWidth="150">
-            <Label text="NEXT" styleClass="sectionLabel" layoutX="10" layoutY="10"/>
-            <GridPane fx:id="nextPanel" layoutX="30" layoutY="40"/>
-        </Pane>
-    </VBox>
+        <!-- Side Panel -->
+        <VBox spacing="10" HBox.hgrow="NEVER" prefWidth="150">
+
+            <!-- Hold Block -->
+            <VBox styleClass="holdBoard" fx:id="holdBoard" prefHeight="125" prefWidth="150">
+                <Label text="HOLD" styleClass="sectionLabel"/>
+                <GridPane fx:id="holdPanel" hgap="0" vgap="0"/>
+            </VBox>
+
+            <!-- Next Block -->
+            <VBox styleClass="nextBoard" fx:id="nextBoard" prefHeight="324" prefWidth="150">
+                <padding>
+                    <javafx.geometry.Insets top="0" right="10" bottom="0" left="10"/>
+                </padding>
+                <Label text="NEXT" styleClass="sectionLabel"/>
+                <GridPane fx:id="nextPanel" hgap="0" vgap="0"/>
+            </VBox>
+        </VBox>
+
+    </HBox>
 
     <!-- Notification -->
-    <StackPane fx:id="groupNotification" layoutY="203" AnchorPane.rightAnchor="0.0" AnchorPane.leftAnchor="0.0" prefHeight="100">
+    <StackPane fx:id="groupNotification"></StackPane>
 
-    </StackPane>
+    <!-- Pause Overlay -->
+    <VBox fx:id="pauseOverlay" visible="false" style="-fx-background-color: rgba(0, 0, 0, 0.5);" spacing="20" alignment="CENTER">
+        <Button text="Resume" onAction="#resumeGame"/>
+        <Button text="Main Menu" onAction="#goMainMenu"/>
+    </VBox>
 
     <stylesheets>
         <URL value="@window_style.css"/>
     </stylesheets>
-    
-</AnchorPane>
+
+</StackPane>

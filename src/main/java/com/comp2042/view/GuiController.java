@@ -21,6 +21,8 @@ import javafx.util.Duration;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.Scene;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -28,6 +30,10 @@ import java.util.ResourceBundle;
 import com.comp2042.controller.InputEventListener;
 import com.comp2042.models.ClearRow;
 import com.comp2042.models.ViewData;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.control.Label;;
 
 public class GuiController implements Initializable {
 
@@ -61,6 +67,11 @@ public class GuiController implements Initializable {
     @FXML
     private VBox pauseOverlay;
 
+    @FXML private Label scoreText;
+    @FXML private Label levelText;
+
+    private Scene displayScene;
+
     private Rectangle[][] displayMatrix;
 
     private InputEventListener eventListener;
@@ -75,7 +86,8 @@ public class GuiController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+        Font.loadFont(getClass().getClassLoader().getResource("prstart.ttf").toExternalForm(), 38);
+        
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -101,6 +113,8 @@ public class GuiController implements Initializable {
             gameOverPanel.hide();
         }
 
+        // Score
+        scoreText.setText("0");
     }
 
     public void initGameView(int[][] boardMatrix, ViewData brick) {
@@ -170,8 +184,6 @@ public class GuiController implements Initializable {
         ghostBrickPanel.setLayoutX(Math.round(gamePanel.getLayoutX() + brick.getGhostXPosition() * BRICK_SIZE));
         ghostBrickPanel.setLayoutY(Math.round(-40 + gamePanel.getLayoutY() + brick.getGhostYPosition() * BRICK_SIZE));
 
-        // pauseOverlayContainer.setPrefWidth(gameBoard.getWidth());
-        // pauseOverlayContainer.setPrefHeight(gameBoard.getHeight());
     }
 
     private Color getFillColor(int i) {
@@ -302,7 +314,12 @@ public class GuiController implements Initializable {
         this.eventListener = eventListener;
     }
 
-    public void bindScore(IntegerProperty integerProperty) {
+    public void bindScore(javafx.beans.property.IntegerProperty integerProperty) {
+        if (integerProperty == null || scoreText == null) return;
+        // bind on FX thread to be safe
+        javafx.application.Platform.runLater(() -> {
+            scoreText.textProperty().bind(integerProperty.asString());
+        });
     }
 
     public void gameOver() {
@@ -340,5 +357,37 @@ public class GuiController implements Initializable {
 
     public boolean isGameOver() {
         return isGameOver.getValue();
+    }
+
+    public GridPane getGameBoardPanel() {
+        return gamePanel;
+    }
+
+    public void goMainMenu(ActionEvent actionEvent) {
+        // Stop the game before replacing the root
+        if (eventListener != null) {
+            eventListener.stopGame();
+        }
+
+        try {
+            // Load the main menu FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mainMenu.fxml"));
+            Parent mainMenuRoot = loader.load();
+
+            // Replace the current scene's root with the main menu
+            Scene currentScene = displayScene;
+            currentScene.setRoot(mainMenuRoot);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setScene(Scene scene) {
+        this.displayScene = scene;
+    }
+
+    public void updateScore(int score) {
+        scoreText.setText(String.valueOf(score));
     }
 }

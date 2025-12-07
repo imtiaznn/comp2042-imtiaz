@@ -83,8 +83,18 @@ public class SimpleBoard implements Board {
     public boolean dropBrick() {
         Point p = calculateGhostOffset(brickOffset);
         brickOffset = p;
-        ghostBrickOffset = p;
-        return true;
+
+        mergeBrickToBackground();
+
+        ClearRow clearRow = clearRows();
+
+        if (clearRow.getLinesRemoved() > 0) {
+            score.add(clearRow.getScoreBonus());
+        }
+
+        createNewBrick();
+
+        return false;
     }
 
     @Override

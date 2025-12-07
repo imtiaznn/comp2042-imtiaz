@@ -15,9 +15,9 @@ import com.comp2042.models.ViewData;
 import com.comp2042.view.GuiController;
 
 import javafx.animation.AnimationTimer;
-import javafx.scene.Scene;
 
 import javafx.scene.input.KeyCode;
+import javafx.scene.Scene;
 
 public class GameController implements InputEventListener {
 
@@ -45,7 +45,9 @@ public class GameController implements InputEventListener {
         viewGuiController = c;
         board.createNewBrick();
         viewGuiController.setEventListener(this);
+
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
+        
         attachKeyInput(scene);
         
         // Game loop insitialisation
@@ -56,18 +58,17 @@ public class GameController implements InputEventListener {
                 update(now);
             }
         };
+        
         animationTimer.start();
 
-        // Game loop initialization
-        // timeline = new Timeline(new KeyFrame(
-        //     Duration.millis(400),
-        //     ae -> {
-        //         processKeyInput();
-        //         update();
-        //     }
-        // ));
-        // timeline.setCycleCount(Timeline.INDEFINITE);
-        // timeline.play();
+        GameSettings.getPlayerScore();
+        board.getScore().scoreProperty().addListener((obs, oldV, newV) -> {
+            int currentHigh = GameSettings.getPlayerScore();
+            int newScore = newV.intValue();
+            if (newScore > currentHigh) {
+                GameSettings.setPlayerScore(newScore);
+            }
+        });
         
         viewGuiController.bindScore(board.getScore().scoreProperty());
     }
@@ -90,7 +91,7 @@ public class GameController implements InputEventListener {
             canMove = board.moveBrickDown();
             fallCooldown = now;
         }
-        
+
         // Move brick down
         viewGuiController.refreshBrick(board.getViewData());
 
@@ -106,18 +107,20 @@ public class GameController implements InputEventListener {
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
                 viewGuiController.showScoreNotification();
+                viewGuiController.updateScore(board.getScore().scoreProperty().getValue());
             }
 
             // End game if cannot move and final block is intersecting
             if (board.createNewBrick()) {
+                try {
+                    GameSettings.setPlayerScore(Math.max(GameSettings.getPlayerScore(), board.getScore().scoreProperty().getValue()));
+                } catch (Exception ignored) {}
                 viewGuiController.gameOver();
             }
             
             // Refresh view
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
             
-        } else {
-            board.getScore().add(1);
         }
     }
 
@@ -149,11 +152,11 @@ public class GameController implements InputEventListener {
                 return board.holdBrick();
             case DROP:
                 board.dropBrick();
-                // board.mergeBrickToBackground();
                 break;
             default:
                 break;
         }
+
         return board.getViewData();
     }
 
@@ -179,6 +182,8 @@ public class GameController implements InputEventListener {
                 }
                 else if (code == KeyCode.SPACE) {
                     onMoveEvent(new MoveEvent(EventType.DROP, EventSource.USER));
+                    viewGuiController.refreshGameBackground(board.getBoardMatrix());
+                    viewGuiController.refreshBrick(board.getViewData());
                 };
 
                 e.consume();                
@@ -241,3 +246,4 @@ public class GameController implements InputEventListener {
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
     }
 }
+
