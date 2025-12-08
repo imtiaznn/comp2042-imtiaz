@@ -15,6 +15,8 @@ import com.comp2042.models.ViewData;
 import com.comp2042.view.GuiController;
 
 import javafx.animation.AnimationTimer;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.Scene;
@@ -23,6 +25,13 @@ public class GameController implements InputEventListener {
 
     private AnimationTimer animationTimer;
     private ClearRow lastClearRow;
+
+    // Time attack mode
+    private final boolean timeAttack;
+    private long timeRemainingMs = 0L;
+    private final long initialTimeMs;
+    private long lastTimeUpdateNano = 0L;
+    private final IntegerProperty timeRemainingSeconds = new SimpleIntegerProperty(0);
 
     // Input smoothing
     private final Set<KeyCode> activeKeys = new HashSet<>();
@@ -42,23 +51,62 @@ public class GameController implements InputEventListener {
     private final GuiController viewGuiController;
 
     public GameController(GuiController c, Scene scene) {
+        this(c, scene, 0);
+    }
+
+    /**
+     * Create a GameController. If timeLimitSeconds > 0, the game will run in Time Attack mode
+     * and will end when the timer reaches zero.
+     */
+    public GameController(GuiController c, Scene scene, int timeLimitSeconds) {
         viewGuiController = c;
         board.createNewBrick();
         viewGuiController.setEventListener(this);
 
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
-        
+
         attachKeyInput(scene);
-        
+
+        // Time attack setup
+        this.timeAttack = timeLimitSeconds > 0;
+        this.initialTimeMs = timeLimitSeconds * 1000L;
+        if (this.timeAttack) {
+            this.timeRemainingMs = initialTimeMs;
+            this.timeRemainingSeconds.set((int) (this.timeRemainingMs / 1000L));
+            viewGuiController.bindTimer(this.timeRemainingSeconds);
+            this.lastTimeUpdateNano = System.nanoTime();
+        }
+
         // Game loop insitialisation
         animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 processKeyInput();
+
+                if (timeAttack) {
+                    long deltaNs = now - lastTimeUpdateNano;
+                    if (deltaNs > 0) {
+                        timeRemainingMs -= deltaNs / 1000000L; // convert to ms
+                        lastTimeUpdateNano = now;
+                        int secs = (int) Math.max(0, (timeRemainingMs + 999) / 1000);
+                        if (secs != timeRemainingSeconds.get()) {
+                            timeRemainingSeconds.set(secs);
+                        }
+                        if (timeRemainingMs <= 0) {
+                            // Time is up -> end the game
+                            try {
+                                GameSettings.setPlayerScore(Math.max(GameSettings.getPlayerScore(), board.getScore().scoreProperty().getValue()));
+                            } catch (Exception ignored) {}
+                            viewGuiController.gameOver(board.getScore().scoreProperty().getValue());
+                            return;
+                        }
+                    }
+                }
+
                 update(now);
             }
         };
-        
+
         animationTimer.start();
 
         GameSettings.getPlayerScore();
@@ -69,7 +117,7 @@ public class GameController implements InputEventListener {
                 GameSettings.setPlayerScore(newScore);
             }
         });
-        
+
         viewGuiController.bindScore(board.getScore().scoreProperty());
     }
 
@@ -102,20 +150,27 @@ public class GameController implements InputEventListener {
             // Clear rows
             ClearRow clearRow = board.clearRows();
             lastClearRow = clearRow;
+            System.out.println("[GameController] clearRows returned lines=" + clearRow.getLinesRemoved() + " bonus=" + clearRow.getScoreBonus());
 
             // Update score
             if (clearRow.getLinesRemoved() > 0) {
+                System.out.println("[GameController] Detected cleared rows: " + clearRow.getLinesRemoved() + ", calling showScoreNotification on viewGuiController id=" + System.identityHashCode(viewGuiController));
                 board.getScore().add(clearRow.getScoreBonus());
-                viewGuiController.showScoreNotification();
+                try {
+                    viewGuiController.showScoreNotification(clearRow);
+                } catch (Exception ex) {
+                    System.out.println("[GameController] Exception while calling showScoreNotification: " + ex);
+                    ex.printStackTrace();
+                }
                 viewGuiController.updateScore(board.getScore().scoreProperty().getValue());
             }
 
             // End game if cannot move and final block is intersecting
-            if (board.createNewBrick()) {
+                if (board.createNewBrick()) {
                 try {
                     GameSettings.setPlayerScore(Math.max(GameSettings.getPlayerScore(), board.getScore().scoreProperty().getValue()));
                 } catch (Exception ignored) {}
-                viewGuiController.gameOver();
+                viewGuiController.gameOver(board.getScore().scoreProperty().getValue());
             }
             
             // Refresh view
@@ -243,6 +298,12 @@ public class GameController implements InputEventListener {
     @Override
     public void createNewGame() {
         board.newGame();
+        // Reset time attack timer if applicable
+        if (timeAttack) {
+            this.timeRemainingMs = this.initialTimeMs;
+            this.timeRemainingSeconds.set((int) (this.timeRemainingMs / 1000L));
+            this.lastTimeUpdateNano = System.nanoTime();
+        }
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
     }
 }

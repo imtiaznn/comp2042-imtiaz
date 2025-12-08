@@ -1,5 +1,6 @@
 .root {
     -fx-background-image: url("background_image.png");
+    -fx-font-family: "Press Start Regular";
 }
 
 .nextBrick {
@@ -12,7 +13,7 @@
 .holdBoard, 
 .nextBoard{
     -fx-border-color: #61a2b1;
-    -fx-border-width: 6;
+    -fx-border-width: 12px;
 }
 
 .sectionLabel {
@@ -74,21 +75,47 @@
 
 .gameOverStyle {
     -fx-font-family: "Press Start Regular";
-    -fx-font-size: 24;
-    -fx-background-color: red;
+    -fx-font-size: 18;
+    -fx-text-fill: white;
+    -fx-background-color: rgba(0, 0, 0, 0.7);
     -fx-pref-width: 400px;
 }
 
-.scoreNotificationStyle {
+.scoreNotificationStyle,
+.notification {
     -fx-font-family: "Press Start Regular";
-    -fx-font-size: 24;
-    -fx-pref-width: 400px;
+    -fx-font-size: 16;
     -fx-text-fill: white;
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-pref-width: 400px;
 }
 
 .scoreClass{
     -fx-font-family: "Press Start Regular";
     -fx-font-size: 24;
     -fx-fill: white;
+    -fx-text-fill: white;
+}
+
+.button {
+    -fx-font-family: "Press Start Regular";
+    -fx-font-size: 14;
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.titleLabel {
+    -fx-font-family: "Press Start Regular";
+    -fx-font-size: 32;
+    -fx-text-fill: white;
+}
+
+.subtitleLabel {
+    -fx-font-family: "Press Start Regular";
+    -fx-font-size: 18;
     -fx-text-fill: white;
 }

@@ -19,8 +19,8 @@
             <Label text="SCORE" styleClass="sectionLabel" layoutX="20"/>
             <Label fx:id="scoreText" text="0" styleClass="infoText"/>
 
-            <Label text="LEVEL" styleClass="sectionLabel" layoutX="20"/>
-            <Label fx:id="levelText" text="1" styleClass="infoText"/>
+            <Label text="TIME" styleClass="sectionLabel" layoutX="20"/>
+            <Label fx:id="timerText" text="00:00" styleClass="infoText"/>
 
         </VBox>
 
@@ -37,7 +37,7 @@
         </Pane>
 
         <!-- Side Panel -->
-        <VBox spacing="10" HBox.hgrow="NEVER" prefWidth="150">
+        <VBox HBox.hgrow="NEVER" prefWidth="150">
 
             <!-- Hold Block -->
             <VBox styleClass="holdBoard" fx:id="holdBoard" prefHeight="125" prefWidth="150">
@@ -46,7 +46,7 @@
             </VBox>
 
             <!-- Next Block -->
-            <VBox styleClass="nextBoard" fx:id="nextBoard" prefHeight="324" prefWidth="150">
+            <VBox styleClass="nextBoard" fx:id="nextBoard" prefHeight="344" prefWidth="150">
                 <padding>
                     <javafx.geometry.Insets top="0" right="10" bottom="0" left="10"/>
                 </padding>
@@ -62,8 +62,9 @@
 
     <!-- Pause Overlay -->
     <VBox fx:id="pauseOverlay" visible="false" style="-fx-background-color: rgba(0, 0, 0, 0.5);" spacing="20" alignment="CENTER">
-        <Button text="Resume" onAction="#resumeGame"/>
-        <Button text="Main Menu" onAction="#goMainMenu"/>
+        <Button text="Resume" onAction="#resumeGame" styleClass="button"/>
+        <Button text="Restart" onAction="#restartGame" styleClass="button"/>
+        <Button text="Main Menu" onAction="#goMainMenu" styleClass="button"/>
     </VBox>
 
     <stylesheets>

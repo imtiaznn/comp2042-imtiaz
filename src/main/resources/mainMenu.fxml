@@ -11,11 +11,11 @@
     <!-- Main Menu Pane -->
     <HBox alignment="CENTER">
 
-        <VBox spacing="20" alignment="CENTER" prefWidth="400" prefHeight="400">
+        <VBox spacing="20" alignment="CENTER" prefWidth="500" prefHeight="500">
             <Label text="TETRIS" styleClass="titleLabel"/>
 
-            <Button text="Play" prefWidth="200" onAction="#playGame"/>
-            <Button text="Exit" prefWidth="200"/>
+            <Button text="Play" onAction="#playGame" styleClass="button"/>
+            <Button text="Exit" onAction="#exitGame" styleClass="button"/>
 
         </VBox>
     </HBox>

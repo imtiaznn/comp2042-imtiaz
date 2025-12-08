@@ -6,21 +6,26 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import java.io.IOException;
+import com.comp2042.view.GuiController;
+import com.comp2042.controller.GameController;
 
 public class MainMenuController {
 
 @FXML
 public void playGame(ActionEvent event) {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/levelSelect.fxml"));
-        Parent levelRoot = loader.load();
-        Object ctrl = loader.getController();
-        System.out.println("Loaded controller: " + ctrl);
-        ((Node) event.getSource()).getScene().setRoot(levelRoot);
-    } catch (IOException e) {
-        e.printStackTrace(); // check console for detailed error
-    }
+        try {
+            // Load the level selection screen so the user can choose Normal/Time Attack
+            FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("levelSelect.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = ((Node) event.getSource()).getScene();
+            scene.setRoot(root);
+
+        } catch (IOException e) {
+            e.printStackTrace(); // check console for detailed error
+        }
 }
 
     @FXML

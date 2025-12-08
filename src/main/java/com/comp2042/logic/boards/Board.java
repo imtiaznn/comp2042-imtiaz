@@ -14,7 +14,7 @@ public interface Board {
 
     boolean rotateLeftBrick();
 
-    boolean dropBrick();
+    com.comp2042.models.ClearRow dropBrick();
 
     boolean createNewBrick();
 

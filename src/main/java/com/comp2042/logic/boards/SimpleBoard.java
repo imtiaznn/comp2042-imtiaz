@@ -80,7 +80,7 @@ public class SimpleBoard implements Board {
     }
     
     @Override
-    public boolean dropBrick() {
+    public ClearRow dropBrick() {
         Point p = calculateGhostOffset(brickOffset);
         brickOffset = p;
 
@@ -88,13 +88,15 @@ public class SimpleBoard implements Board {
 
         ClearRow clearRow = clearRows();
 
+        System.out.println("[SimpleBoard] dropBrick clearRows lines=" + clearRow.getLinesRemoved() + " bonus=" + clearRow.getScoreBonus());
+
         if (clearRow.getLinesRemoved() > 0) {
             score.add(clearRow.getScoreBonus());
         }
 
         createNewBrick();
 
-        return false;
+        return clearRow;
     }
 
     @Override

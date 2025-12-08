@@ -6,32 +6,20 @@
 <?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.comp2042.view.LevelSelectController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.comp2042.view.LevelSelectController"
+            xmlns="http://javafx.com/javafx">
     
     <!-- Main Menu Pane -->
     <HBox alignment="CENTER">
-        <VBox spacing="20" alignment="CENTER" prefWidth="400" prefHeight="400">
+        <VBox spacing="20" alignment="CENTER" prefWidth="500" prefHeight="500">
             <Label text="SELECT LEVEL" styleClass="titleLabel"/>
 
-            <HBox spacing="10" alignment="CENTER">
-                <Button fx:id="level1" text="Level 1" prefWidth="200" onAction="#onLevelSelected"/>
-                <Button fx:id="level2" text="Level 2" prefWidth="200" onAction="#onLevelSelected"/>
-                <Button fx:id="level3" text="Level 3" prefWidth="200" onAction="#onLevelSelected"/>
-                <Button fx:id="level4" text="Level 4" prefWidth="200" onAction="#onLevelSelected"/>
-                <Button fx:id="level5" text="Level 5" prefWidth="200" onAction="#onLevelSelected"/>
-            </HBox>
+                <Button fx:id="normalModeBtn" text="Normal" prefWidth="200" onAction="#playGameNormal" styleClass="button"/>
+                <Button fx:id="timeModeBtn" text="Time Attack" prefWidth="200" onAction="#playGameTime" styleClass="button"/>
 
-            <HBox spacing="10" alignment="CENTER">
-                <Button fx:id="level6" text="Level 6" prefWidth="200" onAction="#onLevelSelected"/>
-                <Button fx:id="level7" text="Level 7" prefWidth="200" onAction="#onLevelSelected"/>
-                <Button fx:id="level8" text="Level 8" prefWidth="200" onAction="#onLevelSelected"/>
-                <Button fx:id="level9" text="Level 9" prefWidth="200" onAction="#onLevelSelected"/>
-                <Button fx:id="level10" text="Level 10" prefWidth="200" onAction="#onLevelSelected"/>
-            </HBox>
+            <Button text="Back" prefWidth="200" onAction="#goMainMenu" styleClass="button"/>
 
-            <Button text="Main Menu" prefWidth="200" onAction="#goMainMenu"/>
-
-        </VBox>
+        </VBox> 
     </HBox>
 
     <stylesheets>

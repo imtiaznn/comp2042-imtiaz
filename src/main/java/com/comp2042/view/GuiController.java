@@ -69,6 +69,7 @@ public class GuiController implements Initializable {
 
     @FXML private Label scoreText;
     @FXML private Label levelText;
+    @FXML private Label timerText;
 
     private Scene displayScene;
 
@@ -86,7 +87,6 @@ public class GuiController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Font.loadFont(getClass().getClassLoader().getResource("prstart.ttf").toExternalForm(), 38);
         
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
@@ -112,6 +112,8 @@ public class GuiController implements Initializable {
             groupNotification.getChildren().add(gameOverPanel);
             gameOverPanel.hide();
         }
+
+        System.out.println("[GuiController] initialize id=" + System.identityHashCode(this) + " groupNotification=" + (groupNotification != null));
 
         // Score
         scoreText.setText("0");
@@ -292,20 +294,29 @@ public class GuiController implements Initializable {
         rectangle.setSmooth(false);
     }
 
-    public void showScoreNotification() {
-        if (isPause.getValue() == Boolean.FALSE) {
-            ClearRow clearRow = eventListener.getClearRows();
-
-            if (clearRow != null && clearRow.getLinesRemoved() > 0) {
-                // NotificationPanel notificationPanel = new NotificationPanel("+" + clearRow.getScoreBonus());
-                // groupNotification.getChildren().add(notificationPanel);
-                // notificationPanel.showScore(groupNotification.getChildren());
-
+    public void showScoreNotification(ClearRow clearRow) {
+        if (clearRow == null) return;
+        if (isPause.getValue() == Boolean.FALSE && clearRow.getLinesRemoved() > 0) {
+                System.out.println("[GuiController] showScoreNotification called with bonus=" + clearRow.getScoreBonus());
                 // Score notification
                 MessageOverlay scoreNotification = new MessageOverlay("+" + clearRow.getScoreBonus(), "scoreNotificationStyle", Duration.seconds(1.0));
+                scoreNotification.setVisible(true);
+                scoreNotification.setManaged(true);
+                scoreNotification.setMouseTransparent(true);
                 groupNotification.getChildren().add(scoreNotification);
+                scoreNotification.toFront();
                 scoreNotification.show();
-            }
+                groupNotification.requestLayout();
+
+                // Remove notification when it becomes hidden (MessageOverlay handles its own auto-hide)
+                scoreNotification.visibleProperty().addListener((obsVis, oldVis, newVis) -> {
+                    if (Boolean.FALSE.equals(newVis)) {
+                        Platform.runLater(() -> {
+                            groupNotification.getChildren().remove(scoreNotification);
+                            System.out.println("[GuiController] scoreNotification removed");
+                        });
+                    }
+                });
         }
         gamePanel.requestFocus();
     }
@@ -322,8 +333,31 @@ public class GuiController implements Initializable {
         });
     }
 
+    public void bindTimer(javafx.beans.property.IntegerProperty integerProperty) {
+        if (integerProperty == null || timerText == null) return;
+        // update timer in mm:ss format whenever the property changes
+        javafx.application.Platform.runLater(() -> {
+            int seconds = integerProperty.get();
+            int mins = seconds / 60;
+            int secs = seconds % 60;
+            timerText.setText(String.format("%02d:%02d", mins, secs));
+        });
+
+        integerProperty.addListener((obs, oldV, newV) -> {
+            int s = newV.intValue();
+            int m = s / 60;
+            int sec = s % 60;
+            javafx.application.Platform.runLater(() -> timerText.setText(String.format("%02d:%02d", m, sec)));
+        });
+    }
+
     public void gameOver() {
+        // default: show game over without score
         eventListener.stopGame();
+        gameOverPanel.setText("GAME OVER");
+        // remove any previous bottom controls
+        gameOverPanel.setBottom(null);
+        // show overlay
         gameOverPanel.show();
         isGameOver.setValue(Boolean.TRUE);
     }
@@ -389,5 +423,68 @@ public class GuiController implements Initializable {
 
     public void updateScore(int score) {
         scoreText.setText(String.valueOf(score));
+    }
+
+    public void restartGame() {
+        if (eventListener != null) {
+            eventListener.stopGame();
+            eventListener.createNewGame();
+            eventListener.startGame();
+            isPause.setValue(Boolean.FALSE);
+            isGameOver.setValue(Boolean.FALSE);
+            gameOverPanel.hide();
+            pauseOverlay.setVisible(false);
+            gamePanel.requestFocus();
+        }
+    }
+
+    /**
+     * Show game over overlay with the round score and action buttons.
+     */
+    public void gameOver(int score) {
+        if (eventListener != null) eventListener.stopGame();
+
+        gameOverPanel.setText("GAME OVER\n\nscore:" + score);
+        // create action buttons
+        javafx.scene.layout.HBox actions = new javafx.scene.layout.HBox(10);
+        actions.setAlignment(javafx.geometry.Pos.CENTER);
+
+        javafx.scene.control.Button playAgain = new javafx.scene.control.Button("Play Again");
+        playAgain.setOnAction(ae -> {
+            // restart the same game mode
+            if (eventListener != null) {
+                eventListener.createNewGame();
+                eventListener.startGame();
+            }
+            gameOverPanel.hide();
+            isGameOver.setValue(Boolean.FALSE);
+            if (gamePanel != null) gamePanel.requestFocus();
+        });
+
+        javafx.scene.control.Button mainMenu = new javafx.scene.control.Button("Main Menu");
+        mainMenu.setOnAction(ae -> {
+            // stop and go back to main menu
+            if (eventListener != null) eventListener.stopGame();
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("mainMenu.fxml"));
+                Parent mainMenuRoot = loader.load();
+                if (displayScene != null) displayScene.setRoot(mainMenuRoot);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        actions.getChildren().addAll(playAgain, mainMenu);
+        actions.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7);");
+
+        // Keep the overlay compact and center the buttons inside it
+        gameOverPanel.setPrefHeight(160);
+        gameOverPanel.setMaxHeight(160);
+        BorderPane.setAlignment(actions, javafx.geometry.Pos.CENTER);
+        BorderPane.setMargin(actions, new javafx.geometry.Insets(10, 0, 10, 0));
+        gameOverPanel.setBottom(actions);
+
+        gameOverPanel.show();
+        isGameOver.setValue(Boolean.TRUE);
     }
 }
