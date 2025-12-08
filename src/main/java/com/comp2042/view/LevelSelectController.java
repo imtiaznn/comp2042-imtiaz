@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import com.comp2042.controller.GameController;
 
+/** Controller class for the level selection screen of the Tetris game. */
 public class LevelSelectController {
 
     @FXML
@@ -23,6 +24,10 @@ public class LevelSelectController {
 
     }
 
+    /**
+     * Handles the action of starting a normal game.
+     * @param event
+     */
     @FXML
     public void playGameNormal(ActionEvent event) {
         try {
@@ -44,6 +49,10 @@ public class LevelSelectController {
         }
     }
 
+    /**
+    * Handles the action of starting a time attack game.
+    * @param event
+    */
     @FXML
     public void playGameTime(ActionEvent event) {
         try {
@@ -67,6 +76,10 @@ public class LevelSelectController {
         }
     }
 
+    /**
+    * Handles the action of going back to the main menu.
+    * @param event
+    */
     @FXML
     private void goMainMenu(ActionEvent event) {
         try {

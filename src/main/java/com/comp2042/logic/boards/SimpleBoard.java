@@ -12,6 +12,7 @@ import com.comp2042.utils.MatrixOperations;
 
 import java.awt.*;
 
+/** Simple implementation of the Board interface for a Tetris game. */
 public class SimpleBoard implements Board {
 
     private final int width;
@@ -34,6 +35,10 @@ public class SimpleBoard implements Board {
         score = new Score();
     }
 
+    /**
+     * Move the current brick down by one unit.
+     * @return true if the brick was moved, false if there was a conflict.
+     */
     @Override
     public boolean moveBrickDown() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -49,6 +54,10 @@ public class SimpleBoard implements Board {
         }
     }
     
+    /**
+     * Move the current brick left by one unit.
+     * @return true if the brick was moved, false if there was a conflict.
+     */ 
     @Override
     public boolean moveBrickLeft() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -64,6 +73,10 @@ public class SimpleBoard implements Board {
         }
     }
     
+    /**
+     * Move the current brick right by one unit.
+     * @return true if the brick was moved, false if there was a conflict.
+     */
     @Override
     public boolean moveBrickRight() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -79,6 +92,10 @@ public class SimpleBoard implements Board {
         }
     }
     
+    /**
+     * Drop the current brick to the ghost position.
+     * @return ClearRow object containing information about cleared rows.
+     */
     @Override
     public ClearRow dropBrick() {
         Point p = calculateGhostOffset(brickOffset);
@@ -99,6 +116,10 @@ public class SimpleBoard implements Board {
         return clearRow;
     }
 
+    /**
+     * Update the ghost brick position.
+     * @return true always.
+     */
     @Override
     public boolean updateGhost() {
         Point p = calculateGhostOffset(brickOffset);
@@ -106,7 +127,11 @@ public class SimpleBoard implements Board {
         return true;
     }
 
-    // Ghost position helper function
+    /**
+     * Calculate the ghost brick position based on the current brick position.
+     * @param num Current brick position.
+     * @return Point representing the ghost brick position.
+     */
     private Point calculateGhostOffset(Point num) {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
         Point p = new Point(num);
@@ -122,6 +147,10 @@ public class SimpleBoard implements Board {
         }
     }
     
+    /**
+     * Rotate the current brick left (counter-clockwise) with wall kicks.
+     * @return true if the brick was rotated, false if there was a conflict.
+     */
     @Override
     public boolean rotateLeftBrick() {
         int[][] currentMatrix = MatrixOperations.copy(currentGameMatrix);
@@ -153,6 +182,10 @@ public class SimpleBoard implements Board {
         return false;
     }
 
+    /**
+     * Hold the current brick.
+     * @return ViewData representing the current state of the board.
+     */
     @Override
     public ViewData holdBrick() {
         if (hasHeldThisTurn) {
@@ -179,6 +212,10 @@ public class SimpleBoard implements Board {
         return getViewData();
     }
 
+    /**
+     * Create a new brick.
+     * @return true if the new brick position conflicts with the current game matrix.
+     */
     @Override
     public boolean createNewBrick() {
         Brick currentBrick = brickGenerator.getBrick();
@@ -189,16 +226,27 @@ public class SimpleBoard implements Board {
         return MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) brickOffset.getX(), (int) brickOffset.getY());
     }
     
+    /**
+     * Merge the current brick into the background matrix.
+     */
     @Override
     public void mergeBrickToBackground() {
         currentGameMatrix = MatrixOperations.merge(currentGameMatrix, brickRotator.getCurrentShape(), (int) brickOffset.getX(), (int) brickOffset.getY());
     }
     
+    /**
+     * Get the current game board matrix.
+     * @return 2D array representing the current game board.
+     */
     @Override
     public int[][] getBoardMatrix() {
         return currentGameMatrix;
     }
 
+    /**
+     * Get the current view data of the board.
+     * @return ViewData object containing the current state of the board.
+     */
     @Override
     public ViewData getViewData() {
         // int[][] next = brickGenerator.getNextBrick() != null ? brickGenerator.getNextBrick().getShapeMatrix().get(0) : new int[][]{{0}};
@@ -222,19 +270,38 @@ public class SimpleBoard implements Board {
         return new ViewData(brickRotator.getCurrentShape(), (int) brickOffset.getX(), (int) brickOffset.getY(), next, held, (int) ghostBrickOffset.getX(), (int) ghostBrickOffset.getY());
     }
 
+    /**
+     * Clear completed rows from the board.
+     * @return ClearRow object containing information about cleared rows and the new matrix.
+     */
     @Override
     public ClearRow clearRows() {
         ClearRow clearRow = MatrixOperations.checkRemoving(currentGameMatrix);
         currentGameMatrix = clearRow.getNewMatrix();
         return clearRow;
-
     }
 
+    /**
+     * Get the current player's score.
+     * @return Score object representing the player's score.
+     */
     @Override
-    public Score getScore() {
+    public Score getPlayerScore() {
         return score;
     }
 
+    /**
+     * Set the current player's score.
+     * @param newScore Score object representing the new score.
+     */
+    @Override
+    public void setPlayerScore(Score newScore) {
+        this.score.setScore(newScore.scoreProperty().getValue());
+    }
+
+    /**
+     * Start a new game by resetting the game state.
+     */
     @Override
     public void newGame() {
         currentGameMatrix = new int[width][height];

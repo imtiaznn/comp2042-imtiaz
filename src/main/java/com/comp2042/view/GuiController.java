@@ -2,25 +2,20 @@ package com.comp2042.view;
 
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.util.Duration;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.Scene;
 
@@ -33,8 +28,8 @@ import com.comp2042.models.ViewData;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;;
 
+/**Controller class for managing the GUI of the Tetris game. */
 public class GuiController implements Initializable {
 
     private static final int BRICK_SIZE = 20;
@@ -119,6 +114,11 @@ public class GuiController implements Initializable {
         scoreText.setText("0");
     }
 
+    /**
+     * Initialize the game view with the given board matrix and brick data.
+     * @param boardMatrix the initial game board matrix
+     * @param brick the initial falling brick ViewData
+     */
     public void initGameView(int[][] boardMatrix, ViewData brick) {
         // Create game board display
         displayMatrix = new Rectangle[boardMatrix.length][boardMatrix[0].length];
@@ -188,40 +188,10 @@ public class GuiController implements Initializable {
 
     }
 
-    private Color getFillColor(int i) {
-        Color returnPaint;
-        switch (i) {
-            case 0:
-                returnPaint = Color.TRANSPARENT;
-                break;
-            case 1:
-                returnPaint = Color.AQUA;
-                break;
-            case 2:
-                returnPaint = Color.BLUEVIOLET;
-                break;
-            case 3:
-                returnPaint = Color.GREEN;
-                break;
-            case 4:
-                returnPaint = Color.YELLOW;
-                break;
-            case 5:
-                returnPaint = Color.RED;
-                break;
-            case 6:
-                returnPaint = Color.BEIGE;
-                break;
-            case 7:
-                returnPaint = Color.BURLYWOOD;
-                break;
-            default:
-                returnPaint = Color.WHITE;
-                break;
-        }
-        return returnPaint;
-    }
-
+    /**
+     * Refresh the falling brick and ghost brick display.
+     * @param brick the current ViewData containing brick information
+     */
     public void refreshBrick(ViewData brick) {
         if (isPause.getValue() == Boolean.FALSE) {
             // Set brick panel position
@@ -252,6 +222,10 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Refresh the hold brick display.
+     * @param viewData the current ViewData containing held brick information
+     */
     private void refreshHold(ViewData viewData) {
         int[][] held = viewData.getHeldBrickData();
         for (int i = 0; i < 4; i++) {
@@ -265,6 +239,10 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Refresh the next bricks display.
+     * @param nextBricks the array of next brick matrices
+     */
     public void refreshNext(int[][][] nextBricks) {
         for (int n = 0; n < AMOUNT_NEXT_BRICKS; n++) {
             int[][] next = (nextBricks != null && nextBricks.length > n) ? nextBricks[n] : null;
@@ -280,6 +258,10 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Refresh the game background display based on the current board matrix.
+     * @param board the current board matrix
+     */
     public void refreshGameBackground(int[][] board) {
         for (int i = 2; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -288,12 +270,21 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Set rectangle fill and stroke based on brick color code.
+     * @param color the brick color code
+     * @param rectangle the Rectangle to update
+     */
     private void setRectangleData(int color, Rectangle rectangle) {
         rectangle.setFill(getFillColor(color));
         rectangle.setStroke(null);
         rectangle.setSmooth(false);
     }
 
+    /**
+     * Show score notification when rows are cleared.
+     * @param clearRow the ClearRow object containing information about cleared rows
+     */
     public void showScoreNotification(ClearRow clearRow) {
         if (clearRow == null) return;
         if (isPause.getValue() == Boolean.FALSE && clearRow.getLinesRemoved() > 0) {
@@ -321,10 +312,18 @@ public class GuiController implements Initializable {
         gamePanel.requestFocus();
     }
 
+    /**
+     * Set the event listener for input events.
+     * @param eventListener the event listener to set
+     */
     public void setEventListener(InputEventListener eventListener) {
         this.eventListener = eventListener;
     }
 
+    /**
+     * Bind the score display to the given IntegerProperty.
+     * @param integerProperty the property representing the current score
+     */
     public void bindScore(javafx.beans.property.IntegerProperty integerProperty) {
         if (integerProperty == null || scoreText == null) return;
         // bind on FX thread to be safe
@@ -333,6 +332,10 @@ public class GuiController implements Initializable {
         });
     }
 
+    /**
+     * Bind the level display to the given IntegerProperty.
+     * @param integerProperty the property representing the current level
+     */
     public void bindTimer(javafx.beans.property.IntegerProperty integerProperty) {
         if (integerProperty == null || timerText == null) return;
         // update timer in mm:ss format whenever the property changes
@@ -351,52 +354,9 @@ public class GuiController implements Initializable {
         });
     }
 
-    public void gameOver() {
-        // default: show game over without score
-        eventListener.stopGame();
-        gameOverPanel.setText("GAME OVER");
-        // remove any previous bottom controls
-        gameOverPanel.setBottom(null);
-        // show overlay
-        gameOverPanel.show();
-        isGameOver.setValue(Boolean.TRUE);
-    }
-
-    public void newGame(ActionEvent actionEvent) {
-        eventListener.stopGame();
-        gameOverPanel.hide();
-        eventListener.createNewGame();
-        gamePanel.requestFocus();
-        eventListener.startGame();
-        isPause.setValue(Boolean.FALSE);
-        isGameOver.setValue(Boolean.FALSE);
-    }
-
-    public void pauseGame() {
-        eventListener.stopGame();
-        isPause.setValue(Boolean.TRUE);
-        pauseOverlay.setVisible(true);
-    }
-
-    public void resumeGame() {
-        eventListener.startGame();
-        System.out.println("Resuming game...");        
-        isPause.setValue(Boolean.FALSE);
-        pauseOverlay.setVisible(false);
-    }
-
-    public boolean isPause() {
-        return isPause.getValue();
-    }
-
-    public boolean isGameOver() {
-        return isGameOver.getValue();
-    }
-
-    public GridPane getGameBoardPanel() {
-        return gamePanel;
-    }
-
+    /**
+     * Go back to the main menu, stopping the current game if necessary.
+     */
     public void goMainMenu(ActionEvent actionEvent) {
         // Stop the game before replacing the root
         if (eventListener != null) {
@@ -417,14 +377,25 @@ public class GuiController implements Initializable {
         }
     }
 
+    /**
+     * Set the current scene.
+     * @param scene the scene to set
+     */
     public void setScene(Scene scene) {
         this.displayScene = scene;
     }
 
+    /**
+     * Update the displayed score.
+     * @param score the new score to display
+     */
     public void updateScore(int score) {
         scoreText.setText(String.valueOf(score));
     }
 
+    /**
+     * Restart the current game by stopping it and creating a new game instance.
+     */
     public void restartGame() {
         if (eventListener != null) {
             eventListener.stopGame();
@@ -439,7 +410,56 @@ public class GuiController implements Initializable {
     }
 
     /**
-     * Show game over overlay with the round score and action buttons.
+     * Start a new game, stopping any existing game first.
+     */
+    public void newGame(ActionEvent actionEvent) {
+        eventListener.stopGame();
+        gameOverPanel.hide();
+        eventListener.createNewGame();
+        gamePanel.requestFocus();
+        eventListener.startGame();
+        isPause.setValue(Boolean.FALSE);
+        isGameOver.setValue(Boolean.FALSE);
+    }
+
+    /**
+     * 
+     * Pause the current game.
+     */
+    public void pauseGame() {
+        eventListener.stopGame();
+        isPause.setValue(Boolean.TRUE);
+        pauseOverlay.setVisible(true);
+    }
+
+    /**
+     * Resume the paused game.
+     */
+    public void resumeGame() {
+        eventListener.startGame();
+        System.out.println("Resuming game...");        
+        isPause.setValue(Boolean.FALSE);
+        pauseOverlay.setVisible(false);
+    }
+
+    /**
+     * Check if the game is currently paused.
+     * @return true if the game is paused, false otherwise
+     */
+    public boolean isPause() {
+        return isPause.getValue();
+    }
+
+    /**
+     * Check if the game is over.
+     * @return true if the game is over, false otherwise
+     */
+    public boolean isGameOver() {
+        return isGameOver.getValue();
+    }
+
+    /**
+     * Show game over overlay with the round score and action buttons for replay and main menu.
      */
     public void gameOver(int score) {
         if (eventListener != null) eventListener.stopGame();
@@ -486,5 +506,63 @@ public class GuiController implements Initializable {
 
         gameOverPanel.show();
         isGameOver.setValue(Boolean.TRUE);
+    }
+    
+    /**
+     * Show game over overlay without score.
+     */
+    public void gameOver() {
+        // default: show game over without score
+        eventListener.stopGame();
+        gameOverPanel.setText("GAME OVER");
+        // remove any previous bottom controls
+        gameOverPanel.setBottom(null);
+        // show overlay
+        gameOverPanel.show();
+        isGameOver.setValue(Boolean.TRUE);
+    }
+
+    /**
+     * Get the fill color for a given brick code.  
+     * @param i brick code
+     * @return the appropriate Color for the given brick code
+     */
+    private Color getFillColor(int i) {
+        Color returnPaint;
+        switch (i) {
+            case 0:
+                returnPaint = Color.TRANSPARENT;
+                break;
+            case 1:
+                returnPaint = Color.AQUA;
+                break;
+            case 2:
+                returnPaint = Color.BLUEVIOLET;
+                break;
+            case 3:
+                returnPaint = Color.GREEN;
+                break;
+            case 4:
+                returnPaint = Color.YELLOW;
+                break;
+            case 5:
+                returnPaint = Color.RED;
+                break;
+            case 6:
+                returnPaint = Color.BEIGE;
+                break;
+            case 7:
+                returnPaint = Color.BURLYWOOD;
+                break;
+            default:
+                returnPaint = Color.WHITE;
+                break;
+        }
+        return returnPaint;
+    }
+
+    // Getters
+    public GridPane getGameBoardPanel() {
+        return gamePanel;
     }
 }

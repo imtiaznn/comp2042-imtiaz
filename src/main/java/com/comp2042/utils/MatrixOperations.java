@@ -8,14 +8,22 @@ import java.util.stream.Collectors;
 
 import com.comp2042.models.ClearRow;
 
+/** Utility class for matrix operations related to the Tetris game. */
 public class MatrixOperations {
 
-
-    //We don't want to instantiate this utility class
+    /** Private constructor to prevent instantiation of this utility class. */
     private MatrixOperations(){
 
     }
 
+    /** Checks if a brick intersects with the board matrix at a given position.
+     *
+     * @param matrix The game board matrix.
+     * @param brick The brick matrix.
+     * @param x The x-coordinate on the board where the brick is placed.
+     * @param y The y-coordinate on the board where the brick is placed.
+     * @return true if there is an intersection, false otherwise.
+     */
     public static boolean intersect(final int[][] matrix, final int[][] brick, int x, int y) {
         for (int i = 0; i < brick.length; i++) {
             for (int j = 0; j < brick[i].length; j++) {
@@ -29,6 +37,13 @@ public class MatrixOperations {
         return false;
     }
 
+    /** Checks if the target position is out of bounds of the matrix.
+     *
+     * @param matrix The game board matrix.
+     * @param targetX The x-coordinate to check.
+     * @param targetY The y-coordinate to check.
+     * @return true if out of bounds, false otherwise.
+     */
     private static boolean checkOutOfBound(int[][] matrix, int targetX, int targetY) {
         boolean returnValue = true;
         if (targetX >= 0 && targetY < matrix.length && targetX < matrix[targetY].length) {
@@ -37,6 +52,11 @@ public class MatrixOperations {
         return returnValue;
     }
 
+    /** Creates a deep copy of a 2D integer array.
+     *
+     * @param original The original 2D integer array.
+     * @return A deep copy of the original array.
+     */
     public static int[][] copy(int[][] original) {
         int[][] myInt = new int[original.length][];
         for (int i = 0; i < original.length; i++) {
@@ -48,6 +68,14 @@ public class MatrixOperations {
         return myInt;
     }
 
+    /** Merges a brick into the game board matrix at a specified position.
+     *
+     * @param filledFields The game board matrix.
+     * @param brick The brick matrix.
+     * @param x The x-coordinate on the board where the brick is placed.
+     * @param y The y-coordinate on the board where the brick is placed.
+     * @return A new matrix with the brick merged into the board.
+     */
     public static int[][] merge(int[][] filledFields, int[][] brick, int x, int y) {
         int[][] copy = copy(filledFields);
         for (int i = 0; i < brick.length; i++) {
@@ -62,6 +90,11 @@ public class MatrixOperations {
         return copy;
     }
 
+    /** Checks and removes full rows from the game board matrix.
+     *
+     * @param matrix The game board matrix.
+     * @return A ClearRow object containing the number of cleared rows, the new matrix, and the score bonus.
+     */    
     public static ClearRow checkRemoving(final int[][] matrix) {
         int[][] tmp = new int[matrix.length][matrix[0].length];
         Deque<int[]> newRows = new ArrayDeque<>();
@@ -94,6 +127,11 @@ public class MatrixOperations {
         return new ClearRow(clearedRows.size(), tmp, scoreBonus);
     }
 
+    /** Creates a deep copy of a list of 2D integer arrays.
+     *
+     * @param list The original list of 2D integer arrays.
+     * @return A deep copy of the original list.
+     */
     public static List<int[][]> deepCopyList(List<int[][]> list){
         return list.stream().map(MatrixOperations::copy).collect(Collectors.toList());
     }

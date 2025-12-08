@@ -21,6 +21,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.input.KeyCode;
 import javafx.scene.Scene;
 
+/** Controller class for managing the game logic and user input. */
 public class GameController implements InputEventListener {
 
     private AnimationTimer animationTimer;
@@ -55,7 +56,7 @@ public class GameController implements InputEventListener {
     }
 
     /**
-     * Create a GameController. If timeLimitSeconds > 0, the game will run in Time Attack mode
+     * Create a GameController. If timeLimitSeconds > 0, the game will run in Timed mode
      * and will end when the timer reaches zero.
      */
     public GameController(GuiController c, Scene scene, int timeLimitSeconds) {
@@ -67,7 +68,7 @@ public class GameController implements InputEventListener {
 
         attachKeyInput(scene);
 
-        // Time attack setup
+        // Timed mode setup
         this.timeAttack = timeLimitSeconds > 0;
         this.initialTimeMs = timeLimitSeconds * 1000L;
         if (this.timeAttack) {
@@ -94,10 +95,7 @@ public class GameController implements InputEventListener {
                         }
                         if (timeRemainingMs <= 0) {
                             // Time is up -> end the game
-                            try {
-                                GameSettings.setPlayerScore(Math.max(GameSettings.getPlayerScore(), board.getScore().scoreProperty().getValue()));
-                            } catch (Exception ignored) {}
-                            viewGuiController.gameOver(board.getScore().scoreProperty().getValue());
+                            viewGuiController.gameOver(board.getPlayerScore().scoreProperty().getValue());
                             return;
                         }
                     }
@@ -109,28 +107,14 @@ public class GameController implements InputEventListener {
 
         animationTimer.start();
 
-        GameSettings.getPlayerScore();
-        board.getScore().scoreProperty().addListener((obs, oldV, newV) -> {
-            int currentHigh = GameSettings.getPlayerScore();
-            int newScore = newV.intValue();
-            if (newScore > currentHigh) {
-                GameSettings.setPlayerScore(newScore);
-            }
-        });
 
-        viewGuiController.bindScore(board.getScore().scoreProperty());
+        viewGuiController.bindScore(board.getPlayerScore().scoreProperty());
     }
 
-    public ViewData getViewData() {
-        return board.getViewData();
-    }
-
-    public ClearRow getClearRows() {
-        ClearRow tmp = lastClearRow;
-        lastClearRow = null;
-        return tmp;
-    }
-
+    /**
+     * Game update tick.
+     * @param now
+     */
     public void update(long now) {
         boolean canMove = true;
 
@@ -155,22 +139,19 @@ public class GameController implements InputEventListener {
             // Update score
             if (clearRow.getLinesRemoved() > 0) {
                 System.out.println("[GameController] Detected cleared rows: " + clearRow.getLinesRemoved() + ", calling showScoreNotification on viewGuiController id=" + System.identityHashCode(viewGuiController));
-                board.getScore().add(clearRow.getScoreBonus());
+                board.getPlayerScore().add(clearRow.getScoreBonus());
                 try {
                     viewGuiController.showScoreNotification(clearRow);
                 } catch (Exception ex) {
                     System.out.println("[GameController] Exception while calling showScoreNotification: " + ex);
                     ex.printStackTrace();
                 }
-                viewGuiController.updateScore(board.getScore().scoreProperty().getValue());
+                viewGuiController.updateScore(board.getPlayerScore().scoreProperty().getValue());
             }
 
             // End game if cannot move and final block is intersecting
-                if (board.createNewBrick()) {
-                try {
-                    GameSettings.setPlayerScore(Math.max(GameSettings.getPlayerScore(), board.getScore().scoreProperty().getValue()));
-                } catch (Exception ignored) {}
-                viewGuiController.gameOver(board.getScore().scoreProperty().getValue());
+            if (board.createNewBrick()) {
+                viewGuiController.gameOver(board.getPlayerScore().scoreProperty().getValue());
             }
             
             // Refresh view
@@ -179,16 +160,11 @@ public class GameController implements InputEventListener {
         }
     }
 
-    @Override
-    public void startGame() {
-        if (animationTimer != null) animationTimer.start();
-    }
-
-    @Override
-    public void stopGame() {
-        if (animationTimer != null) animationTimer.stop();
-    }
-
+    /**
+     * Handle move events from user input or other sources.
+     * @param event the MoveEvent to process
+     * @return updated ViewData after processing the move
+       */
     public ViewData onMoveEvent(MoveEvent event) {
         switch (event.getEventType()) {
             case LEFT:
@@ -215,7 +191,10 @@ public class GameController implements InputEventListener {
         return board.getViewData();
     }
 
-    // Apply DAS and ARR for key inputs
+    /**
+     * Attach key input handlers to the given scene.
+     * @param scene
+     */
     public void attachKeyInput(Scene scene) {
         scene.setOnKeyPressed(e -> {
             KeyCode code = e.getCode();
@@ -254,6 +233,9 @@ public class GameController implements InputEventListener {
         });
     }
 
+    /**
+     * Process continuous key input for smooth movement.
+     */
     private void processKeyInput() {
         long now = System.currentTimeMillis();
 
@@ -295,6 +277,25 @@ public class GameController implements InputEventListener {
         }
     }
 
+    /**
+     * Start the game animation timer.
+     */
+    @Override
+    public void startGame() {
+        if (animationTimer != null) animationTimer.start();
+    }
+
+    /**
+     * Stop the game animation timer.
+     */
+    @Override
+    public void stopGame() {
+        if (animationTimer != null) animationTimer.stop();
+    }
+
+    /**
+     * Create a new game, resetting the board and timer if applicable.
+     */
     @Override
     public void createNewGame() {
         board.newGame();
@@ -305,6 +306,17 @@ public class GameController implements InputEventListener {
             this.lastTimeUpdateNano = System.nanoTime();
         }
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
+    }
+
+    // Getters
+    public ViewData getViewData() {
+        return board.getViewData();
+    }
+
+    public ClearRow getClearRows() {
+        ClearRow tmp = lastClearRow;
+        lastClearRow = null;
+        return tmp;
     }
 }
 

@@ -11,10 +11,15 @@ import java.io.IOException;
 import com.comp2042.view.GuiController;
 import com.comp2042.controller.GameController;
 
+/** Controller class for the main menu of the Tetris game. */
 public class MainMenuController {
 
-@FXML
-public void playGame(ActionEvent event) {
+    /**
+     * Handles the action of starting the game.
+     * @param event
+     */
+    @FXML
+    public void playGame(ActionEvent event) {
         try {
             // Load the level selection screen so the user can choose Normal/Time Attack
             FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("levelSelect.fxml"));
@@ -26,8 +31,12 @@ public void playGame(ActionEvent event) {
         } catch (IOException e) {
             e.printStackTrace(); // check console for detailed error
         }
-}
+    }
 
+    /**
+     * Handles the action of exiting the game.
+     * @param event
+     */
     @FXML
     public void exitGame(ActionEvent event) {
         Platform.exit();

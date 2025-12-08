@@ -1,5 +1,8 @@
 package com.comp2042.events;
 
+/**
+ * Represents a move event in the game.
+ */
 public final class MoveEvent {
     private final EventType eventType;
     private final EventSource eventSource;

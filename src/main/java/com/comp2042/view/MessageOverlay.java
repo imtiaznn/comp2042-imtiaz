@@ -10,19 +10,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
+/** A simple overlay pane to display messages over the game UI. */
 public class MessageOverlay extends BorderPane {
 
     private final Label messageLabel = new Label();
     private Timeline autoHide;
 
-    /**
-     * Create an overlay.
-     * @param text displayed text
-     * @param styleClass CSS style class to apply to the Label (nullable)
-     * @param autoHideAfter optional auto-hide duration; if null the overlay stays until manually hidden
-    **/
-
-    // Constructor with no arguments
     public MessageOverlay() {
         this("", null, null);
     }
@@ -54,7 +47,7 @@ public class MessageOverlay extends BorderPane {
         setMouseTransparent(false);
     }
 
-    // Show the overlay, starting the auto-hide timer if applicable
+    /** Show the overlay. If auto-hide is configured, it will hide after the specified duration. */
     public void show() {
         if (autoHide != null) {
             autoHide.stop();
@@ -63,18 +56,18 @@ public class MessageOverlay extends BorderPane {
         setVisible(true);
     }
 
-    // Hide the overlay and stop the auto-hide timer if running
+    /** Hide the overlay and stop the auto-hide timer if running. */
     public void hide() {
         setVisible(false);
         if (autoHide != null) autoHide.stop();
     }
 
-    // Update the displayed text
+    /** Update the displayed text. */
     public void setText(String text) {
         messageLabel.setText(text);
     }
 
-    // Update the CSS style class applied to the label
+    /** Update the CSS style class applied to the label. */
     public void setStyleClass(String styleClass) {
         messageLabel.getStyleClass().clear();
         if (styleClass != null && !styleClass.isEmpty()) messageLabel.getStyleClass().add(styleClass);

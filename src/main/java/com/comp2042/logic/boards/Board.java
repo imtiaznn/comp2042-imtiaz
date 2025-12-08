@@ -4,6 +4,9 @@ import com.comp2042.models.ClearRow;
 import com.comp2042.models.Score;
 import com.comp2042.models.ViewData;
 
+/**
+ * Interface representing the game board.
+ */
 public interface Board {
 
     boolean moveBrickDown();
@@ -30,7 +33,9 @@ public interface Board {
 
     ClearRow clearRows();
 
-    Score getScore();
+    Score getPlayerScore();
+
+    void setPlayerScore(Score newScore);
 
     void newGame();
 }
